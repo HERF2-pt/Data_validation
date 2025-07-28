@@ -7,7 +7,7 @@ import openpyxl
 
 def main():
     # List of tables to scrape
-    tables = ["F4311", "F4102", "F4111", "F0005", "F0006", "F4301", "F0101", "F0401"]
+    tables = ["F4311", "F4102", "F4111", "F0005", "F0006", "F4301", "F0101", "F0401", "F0010"]
     all_structures = []
 
     # Loop through each table and extract its structure

@@ -13,7 +13,8 @@ SET
 DECLARE @IdentityAuditId decimal(18, 0),
 @RowCountAffected decimal(18, 0),
 @Database varchar(22),
-@BeginDate varchar(10)
+@BeginDate varchar(10),
+@BeginDateFY varchar(10)
 SET
         @Database = 'RDL00001_EnterpriseDataStaging' --  To  have  the  financial  year  of  the  current  date  for  the  standard  cost 
 SELECT
@@ -84,29 +85,44 @@ SELECT
         0,
         0,
         0,
-        'N'
-INSERT INTO
-        [dbo].[F_ProductCost_Purchase] (
-                [DRDL02_Description01002_new],
-                [DRDL02_Description01002],
-                [DRDL01_Description001],
-                [COMCU_CostCenter],
-                [COLOCN_Location],
-                [COITM_IdentifierShortItem],
-                [CCCRCD],
-                [COLEDG_LedgType],
-                [COUNCS_AmountUnitCost],
-                [CCCO],
-                [Cost_Type]
-        )
+        'N' --  To  have  the  financial  year  of  the  current  date  for  the  standard  cost 
+SELECT
+        @BeginDate = [FiscalYear]
+FROM
+        [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]
+WHERE
+        [Date] = CONVERT(DATE, CURRENT_TIMESTAMP) --  To  have  the  first  financial  date  of  the  year  5  years  ago 
+SELECT
+        @BeginDateFY = MIN([Date])
+FROM
+        [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]
+WHERE
+        [FiscalYear] = (
+                SELECT
+                        [FiscalYear]
+                FROM
+                        [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]
+                WHERE
+                        [Date] = CONVERT(DATE, DATEADD(YEAR, -5, CURRENT_TIMESTAMP))
+        );
+
+--  To  get  the  first  day  of  the  fiscal  year 
+DROP TABLE IF EXISTS #DimDate 
+SELECT
+        MIN([Id]) [Id],
+        [FiscalYear] INTO #DimDate 
+FROM
+        [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]
+WHERE
+        [Date] >= @BeginDateFY
+GROUP BY
+        [FiscalYear] DROP TABLE IF EXISTS #ProductCosts 
 SELECT
         CASE
-                WHEN TRIM([DRDL01_Description001]) IN (
-                        'Standard',
-                        'Last  In',
-                        'Last  In  Primary  Vendor'
-                ) THEN @BeginDate
-                WHEN TRIM([DRDL01_Description001]) LIKE 'Actual  2%' THEN REPLACE(TRIM([DRDL02_Description01002]), 'A', '')
+                WHEN TRY_CAST([COLEDG_LedgType] AS INT) IN (01, 07, 22) THEN @BeginDate
+                WHEN TRY_CAST([COLEDG_LedgType] AS INT) IN (57, 58, 59, 60, 61, 62) THEN TRY_CAST(
+                        REPLACE(TRIM([DRDL02_Description01002]), 'A', '') AS INT
+                )
                 ELSE 0
         END [DRDL02_Description01002_new],
         TRIM([DRDL02_Description01002]) [DRDL02_Description01002],
@@ -119,22 +135,69 @@ SELECT
         ISNULL([COUNCS_AmountUnitCost], 0) AS [COUNCS_AmountUnitCost],
         [CCCO],
         CASE
-                WHEN TRIM([DRDL01_Description001]) LIKE 'Actual  2%'
-                OR TRIM([DRDL01_Description001]) = 'Standard' THEN 'Standard'
-                WHEN TRIM([DRDL01_Description001]) = 'Last  In' THEN 'Last  In'
-                WHEN TRIM([DRDL01_Description001]) = 'Last  In  Primary  Vendor' THEN 'Last  In  Primary  Vendor'
+                WHEN TRY_CAST([COLEDG_LedgType] AS INT) IN (07, 57, 58, 59, 60, 61, 62) THEN 'Standard'
+                WHEN TRY_CAST([COLEDG_LedgType] AS INT) = 01 THEN 'Last  In'
+                WHEN TRY_CAST([COLEDG_LedgType] AS INT) = 22 THEN 'Last  In  Primary  Vendor'
                 ELSE ''
-        END Cost_Type
+        END Cost_Type INTO #ProductCosts 
 FROM
         [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4105]
-        LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4101] ON [COITM_IdentifierShortItem] = [IMITM_IdentifierShortItem]
-        LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0005] ON LTRIM(RTRIM([COLEDG_LedgType])) = LTRIM(RTRIM([DRKY_UserDefinedCode]))
-        AND LTRIM(RTRIM([DRSY_ProductCode])) = '40'
-        AND LTRIM(RTRIM([DRRT_UserDefinedCodes])) = 'CM'
+        LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102] F4102 ON (
+                [COITM_IdentifierShortItem] = [IBITM_IdentifierShortItem]
+                AND TRIM([COMCU_CostCenter]) = TRIM([IBMCU_CostCenter])
+        )
+        LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0005] ON TRIM([COLEDG_LedgType]) = TRIM([DRKY_UserDefinedCode])
+        AND TRIM([DRSY_ProductCode]) = '40'
+        AND TRIM([DRRT_UserDefinedCodes]) = 'CM'
         LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0006] ON [MCMCU_CostCenter] = [COMCU_CostCenter]
         LEFT OUTER JOIN [RDL00001_EnterpriseDataLanding].[JDE].[F0010] ON [MCCO_Company] = [CCCO]
 WHERE
-        [IMSTKT_StockingType] IN ('P', 'B', 'O', 'U', 'X', 'H') --  SET  THE  VARIABLE  WITH  THE  ROW  COUNT  OF  THE  DELETE 
+        TRIM([IBSTKT_StockingType]) IN ('P', 'B', 'O', 'U', 'X', 'H')
+        AND (
+                TRY_CAST([COLEDG_LedgType] AS INT) IN (
+                        01,
+                        07,
+                        22,
+                        57,
+                        58,
+                        59,
+                        60,
+                        61,
+                        62
+                )
+        )
+INSERT INTO
+        [dbo].[F_ProductCost_Purchase] (
+                [DRDL02_Description01002_new],
+                [DRDL02_Description01002],
+                [DRDL01_Description001],
+                [COMCU_CostCenter],
+                [COLOCN_Location],
+                [COITM_IdentifierShortItem],
+                [CCCRCD],
+                [COLEDG_LedgType],
+                [COUNCS_AmountUnitCost],
+                [CCCO],
+                [Cost_Type],
+                [Date]
+        )
+SELECT
+        A.[DRDL02_Description01002_new],
+        A.[DRDL02_Description01002],
+        A.[DRDL01_Description001],
+        A.[COMCU_CostCenter],
+        A.[COLOCN_Location],
+        A.[COITM_IdentifierShortItem],
+        A.[CCCRCD],
+        A.[COLEDG_LedgType],
+        A.[COUNCS_AmountUnitCost],
+        A.[CCCO],
+        A.[Cost_Type],
+        B.Id AS Dates
+FROM
+        #ProductCosts            A 
+        INNER JOIN #DimDate  B 
+        ON A.DRDL02_Description01002_new = B.FiscalYear --  SET  THE  VARIABLE  WITH  THE  ROW  COUNT  OF  THE  DELETE 
 SELECT
         @RowCountAffected = @ @ROWCOUNT --  UPDATE  THE  AUDIT  TABLE  WITH  THE  ROWCOUNTAFFECTED 
         EXEC RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION @IdentityAuditId,

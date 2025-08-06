@@ -1,11 +1,11 @@
-##CONNECTION
+# CONNECTION
 
 import pandas as pd
 from sqlalchemy import create_engine
 
 # Define connection parameters
 server = "NADWDATPP1A"
-database = "RDL00001_EnterpriseDataWarehouse"
+database = "RDL00001_EnterpriseDataStaging"
 driver = "ODBC Driver 17 for SQL Server"
 
 # Create SQLAlchemy engine
@@ -30,7 +30,22 @@ def execute_queryPP(query):
     return result
 
 
-## otra forma de hacerlo: df = pd.read_sql(query, engine)
+def execute_queryST(query):
+    """
+    Execute a SQL query and return the result as a pandas DataFrame.
+
+    Parameters:
+    query (str): The SQL query to execute.
+
+    Returns:
+    pd.DataFrame: The result of the query.
+    """
+    with engine.connect() as connection:
+        result = pd.read_sql(query, connection)
+    return result
+
+
+# otra forma de hacerlo: df = pd.read_sql(query, engine)
 # Read data into DataFrame V_F4311
 # this one is to large
 # V_F4311 = execute_query('SELECT * FROM RDL00001_EnterpriseDataLanding.[JDE_BI_OPS].[V_F4311]')

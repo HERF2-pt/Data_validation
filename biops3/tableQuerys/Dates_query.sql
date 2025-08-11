@@ -1,0 +1,39 @@
+SELECT
+    Date,
+    DayOfMonth,
+    DayOfWeekName,
+    FirstDayOfMonth,
+    FirstDayOfYear,
+    FiscalFirstDayOfMonth,
+    FiscalFirstDayOfMonth_EU,
+    FiscalFirstDayOfYear,
+    FiscalFirstDayOfYear_EU,
+    FiscalLastDayOfMonth,
+    FiscalLastDayOfMonth_EU,
+    FiscalLastDayOfYear,
+    FiscalLastDayOfYear_EU,
+    FiscalMonth,
+    FiscalMonth_EU,
+    FiscalMonthName,
+    FiscalMonthName_EU,
+    FiscalQuarter,
+    FiscalQuarter_EU,
+    FiscalWeekOfYear,
+    FiscalWeekOfYear_EU,
+    FiscalYear,
+    FiscalYear_EU,
+    FiscalYearName,
+    FiscalYearName_EU,
+    Id,
+    LastDayOfMonth,
+    LastDayOfYear,
+    MONTH,
+    MonthName,
+    WeekOfYear,
+    Year
+FROM
+    RDL00001_EnterpriseDataWarehouse.Shared.DimDate
+WHERE
+    YEAR(Id) >= YEAR(getdate()) - 5
+ORDER BY
+    Id

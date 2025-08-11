@@ -1,4 +1,10 @@
 # fmt: off
+import sqlite3
+import pandas as pd
+import openpyxl
+from openpyxl import load_workbook
+from connpd import execute_query
+from connpp import execute_queryPP
 import sys
 import os
 
@@ -7,14 +13,6 @@ sys.path.append(os.path.abspath(os.path.join(
 # fmt: on
 # isort: skip
 ###############################################
-
-from connpp import execute_queryPP
-from connpd import execute_query
-from openpyxl import load_workbook
-import openpyxl
-import pandas as pd
-
-import sqlite3
 
 
 # from utils.connpd import execute_query
@@ -47,13 +45,20 @@ dataframes = {}
     CREER LES TABLES DANS SQLLITE
 """
 for table in table_names:
-    query = f"SELECT top 100 * FROM RDL00001_EnterpriseDataWarehouse.dbo.{table}"
+    """
+        # Guardar en SQLite como tabla
+    """
+    query = f"SELECT  * FROM RDL00001_EnterpriseDataWarehouse.dbo.{table}"
     df_result = execute_queryPP(query)
-    # Guardar en el diccionario
-    # dataframes[f"df_{table}"] = df_result
-    # Guardar en SQLite como tabla
+
     df_result.to_sql(table, conn, if_exists="replace", index=False)
-    query2 = f"SELECT * FROM RDL00001_EnterpriseDataWarehouse.dbo.{table}"
+
+    """
+        # Guardar en SQLite como tabla END
+    """
+
+    # Create queries
+    query2 = f"SELECT top 100 * FROM RDL00001_EnterpriseDataWarehouse.dbo.{table}"
     # Créer un DataFrame avec une seule colonne
     df = pd.DataFrame({"query": [query2]})
 

@@ -37,6 +37,7 @@ for cube_name in df_allCubes['CATALOG_NAME']:
 df_allMeasures_combined = pd.concat(measure_dfs, ignore_index=True)
 # add the date of extraction
 df_allMeasures_combined['QueryDate'] = datetime.today().date()
-
+df_allMeasures_combined = df_allMeasures_combined.dropna(axis=1, how='all')
+# df_allMeasures_combined['EXPRESSION'] = df_allMeasures_combined['EXPRESSION'].str.replace(',', ',\n')
 # save it
 df_allMeasures_combined.to_excel(f"AllMeasures{serverName}.xlsx", index=False)

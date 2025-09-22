@@ -3,6 +3,27 @@ SELECT TOP 1000
 
 FROM
     RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+go
+    SELECT
+    TABLE_SCHEMA + '.' + TABLE_NAME AS TABLE_FULL_NAME
+    ,COLUMN_NAME
+    ,DATA_TYPE
+    ,IS_NULLABLE
+    ,TABLE_CATALOG
+    ,GetDate() AS Date
+    ,ORDINAL_POSITION
+FROM [RDL00001_EnterpriseDataWarehouse].INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME LIKE '%ProductCost%' AND TABLE_SCHEMA='dbo'
+ORDER BY TABLE_NAME, COLUMN_NAME
+
+---------------------------
+-----------------------------
+SELECT TOP 1000
+     *
+
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+    where OrderNumber='77242424'
 
 
 SELECT OrderDate ,ReceptionDate, DATEDIFF(DAY,OrderDate,ReceptionDate),
@@ -35,11 +56,21 @@ SELECT *
 FROM
     RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
 WHERE ItemBranchkey='56796'
+GO
 
-SELECT *
+SELECT count(LineNumber)
 FROM
-    RDL00001_EnterpriseDataWarehouse.dbo.D_ItemBranch
-WHERE ItemBranchkey='56796'
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+WHERE CancelDate is  null 
+and OrderDate>='2025-03-01'
+
+SELECT count(distinct LineNumber)
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+WHERE CancelDate is not null 
+and OrderDate>='2025-03-01'
+
+
 
 
 WHERE ReceptionDate IS NULL
@@ -58,25 +89,4 @@ FROM
 -- group by ReceptionDate order by ReceptionDate asc
 WHERE ReceptionDate IS NULL
 
-SELECT
-    TABLE_SCHEMA + '.' + TABLE_NAME AS TABLE_FULL_NAME
-    ,COLUMN_NAME
-    ,DATA_TYPE
-    ,IS_NULLABLE
-    ,TABLE_CATALOG
-    ,GetDate() AS Date
-    ,ORDINAL_POSITION
-FROM [RDL00001_EnterpriseDataWarehouse].INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME LIKE '%PurchaseOrderLine%' AND TABLE_SCHEMA='dbo'
-ORDER BY TABLE_NAME, COLUMN_NAME
 
-SELECT
-    CASE WHEN 'BuyerNumber' = '2141873'  THEN 'CS'
-     WHEN 'ItemNumber' = '555555' AND 'Company' = '09052' THEN 'Subcontractor'
-     WHEN 'ItemNumber' = '222222' AND 'Company' IN ('00024','09011') THEN 'Subcontractor'
-     WHEN 'ItemNumber' = '111111' AND 'Company' IN ('00077','09041') THEN 'Subcontractor'
-     WHEN 'SecondItem' LIKE '%*OP%' AND 'GLClassCode' = 'IN20' AND 'Company' = '00001' THEN 'Subcontractor'
-     ELSE 'General' END AS 'PO_Type'
-FROM
-    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine p
-    LEFT JOIN RDL00001_EnterpriseDataWarehouse.dbo.D_ItemMaster ib ON p.ItemKey=ib.ItemKey

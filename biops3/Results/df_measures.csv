@@ -1,0 +1,1126 @@
+CATALOG_NAME,CUBE_NAME,MEASURE_NAME,MEASURE_UNIQUE_NAME,MEASURE_CAPTION,MEASURE_AGGREGATOR,DATA_TYPE,NUMERIC_PRECISION,NUMERIC_SCALE,DESCRIPTION,EXPRESSION,MEASURE_IS_VISIBLE,MEASURE_NAME_SQL_COLUMN_NAME,MEASURE_UNQUALIFIED_CAPTION,MEASUREGROUP_NAME,MEASURE_DISPLAY_FOLDER,DEFAULT_FORMAT_STRING
+RDL00001_Procurement,RDL00001_Procurement,__Default measure,[Measures].[__Default measure],__Default measure,127,12,65535,-1,,1,0,__Default measure,__Default measure,,,
+RDL00001_Procurement,RDL00001_Procurement,Cancelled_Amount_PO,[Measures].[Cancelled_Amount_PO],Cancelled_Amount_PO,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+ RETURN
+        SUMX(
+             SUMMARIZE(
+                    FILTER(
+                           F_PurchaseOrderLine,
+                           NOT ISBLANK ( F_PurchaseOrderLine[CancelDate] )
+                       ),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+,
+                        REMOVEFILTERS(D_Branch)
+             )
+RETURN OriginalAmountCAD * ExchangeRate
+)",1,Cancelled_Amount_PO,Cancelled_Amount_PO,Calculations,Sum,0.00
+RDL00001_Procurement,RDL00001_Procurement,Active_Amount_PO,[Measures].[Active_Amount_PO],Active_Amount_PO,0,5,65535,-1,,[Total_Amount_PO]-[Cancelled_Amount_PO],0,Active_Amount_PO,Active_Amount_PO,Calculations,Sum,0.00
+RDL00001_Procurement,RDL00001_Procurement,%_Cancelled_Amount_PO,[Measures].[%_Cancelled_Amount_PO],%_Cancelled_Amount_PO,0,5,65535,-1,,"DIVIDE([Cancelled_Amount_PO], [Total_Amount_PO], 0)",1,%_Cancelled_Amount_PO,%_Cancelled_Amount_PO,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Amount_PO,[Measures].[Not_Received_Amount_PO],Not_Received_Amount_PO,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+ RETURN
+        SUMX(
+             SUMMARIZE(
+                    FILTER(
+                           F_PurchaseOrderLine,
+                           ISBLANK ( F_PurchaseOrderLine[ReceptionDate] )
+                       ),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+,
+                        REMOVEFILTERS(D_Branch)
+             )
+RETURN OriginalAmountCAD * ExchangeRate
+)",1,Not_Received_Amount_PO,Not_Received_Amount_PO,Calculations,Sum,0.00
+RDL00001_Procurement,RDL00001_Procurement,Total_Amount_PO_Freight,[Measures].[Total_Amount_PO_Freight],Total_Amount_PO_Freight,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+ VAR LineTypeF = 
+        SUMX(
+             SUMMARIZE(
+                    FILTER(
+                           F_PurchaseOrderLine,
+                           F_PurchaseOrderLine[LineTypeCode] = ""F""
+                       ),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+,
+                        REMOVEFILTERS(D_Branch)
+             )
+              RETURN OriginalAmountCAD * ExchangeRate
+            )
+
+VAR SecondItem = 
+        SUMX(
+             SUMMARIZE(
+                    CALCULATETABLE(F_PurchaseOrderLine, D_ItemMaster[SecondItemNumber] = ""333333-2""),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+             )
+              RETURN OriginalAmountCAD * ExchangeRate
+            )
+
+RETURN LineTypeF + SecondItem",1,Total_Amount_PO_Freight,Total_Amount_PO_Freight,Calculations,Total,0.00
+RDL00001_Procurement,RDL00001_Procurement,Total_Amount_PO_Rush,[Measures].[Total_Amount_PO_Rush],Total_Amount_PO_Rush,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+         RETURN
+         SUMX(
+             SUMMARIZE(
+                    CALCULATETABLE(F_PurchaseOrderLine, D_ItemMaster[SecondItemNumber] = ""333333-3""),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+,
+                        REMOVEFILTERS(D_Branch)
+             )
+              RETURN OriginalAmountCAD * ExchangeRate
+            )",1,Total_Amount_PO_Rush,Total_Amount_PO_Rush,Calculations,Total,0.00
+RDL00001_Procurement,RDL00001_Procurement,TotalOpenAmount,[Measures].[TotalOpenAmount],TotalOpenAmount,0,5,65535,-1,,"SUMX (
+    FILTER (
+        'F_PurchaseOrderLine',
+       'F_PurchaseOrderLine'[LastReception] =1
+            
+    ),
+    'F_PurchaseOrderLine'[AmountOpen]
+)",1,TotalOpenAmount,TotalOpenAmount,Calculations,Total,"#,0.00"
+RDL00001_Procurement,RDL00001_Procurement,TotalQtyOpen,[Measures].[TotalQtyOpen],TotalQtyOpen,0,5,65535,-1,,"SUMX (
+    FILTER (
+        'F_PurchaseOrderLine',
+        'F_PurchaseOrderLine'[LastReception] =1
+                ),
+    'F_PurchaseOrderLine'[QuantityOpen]
+)",1,TotalQtyOpen,TotalQtyOpen,Calculations,Total,"#,0.00"
+RDL00001_Procurement,RDL00001_Procurement,TotalQtyReceived,[Measures].[TotalQtyReceived],TotalQtyReceived,0,5,65535,-1,,"SUMX (
+    
+        'F_PurchaseOrderLine',
+        
+    'F_PurchaseOrderLine'[QuantityReceived]
+)",1,TotalQtyReceived,TotalQtyReceived,Calculations,Total,"#,0.00"
+RDL00001_Procurement,RDL00001_Procurement,TotalReceiptAmount,[Measures].[TotalReceiptAmount],TotalReceiptAmount,0,5,65535,-1,,"SUMX (
+    
+        'F_PurchaseOrderLine',
+     
+    'F_PurchaseOrderLine'[QuantityReceived] * 'F_PurchaseOrderLine'[UnitCostPurchasing]
+)",1,TotalReceiptAmount,TotalReceiptAmount,Calculations,Total,"#,0.00"
+RDL00001_Procurement,RDL00001_Procurement,Total_Line_Count,[Measures].[Total_Line_Count],Total_Line_Count,0,20,65535,-1,,[Cancelled_Line_Count]+[Active_Line_Count],1,Total_Line_Count,Total_Line_Count,Calculations,Total,"#,0"
+RDL00001_Procurement,RDL00001_Procurement,Total_Distinct_PO_Count,[Measures].[Total_Distinct_PO_Count],Total_Distinct_PO_Count,0,20,65535,-1,,DISTINCTCOUNT(F_PurchaseOrderLine[OrderNumber]),1,Total_Distinct_PO_Count,Total_Distinct_PO_Count,Calculations,Total,"#,0"
+RDL00001_Procurement,RDL00001_Procurement,Cancelled_Line_Count,[Measures].[Cancelled_Line_Count],Cancelled_Line_Count,0,20,65535,-1,,"CALCULATE(
+    DISTINCTCOUNT('F_PurchaseOrderLine'[LineNumber]),
+    FILTER(
+        'F_PurchaseOrderLine',
+        NOT ISBLANK('F_PurchaseOrderLine'[CancelDate])
+    )
+)",1,Cancelled_Line_Count,Cancelled_Line_Count,Calculations,Count,0
+RDL00001_Procurement,RDL00001_Procurement,Active_Line_Count,[Measures].[Active_Line_Count],Active_Line_Count,0,20,65535,-1,,"CALCULATE(
+    COUNT('F_PurchaseOrderLine'[LineNumber]),
+    FILTER(
+        'F_PurchaseOrderLine',
+        ISBLANK('F_PurchaseOrderLine'[CancelDate])
+    )
+)",1,Active_Line_Count,Active_Line_Count,Calculations,Count,0
+RDL00001_Procurement,RDL00001_Procurement,Cancelled_Distinct_PO_Count,[Measures].[Cancelled_Distinct_PO_Count],Cancelled_Distinct_PO_Count,0,20,65535,-1,,"VAR Orders =
+    SUMMARIZE(
+        F_PurchaseOrderLine,
+        F_PurchaseOrderLine[OrderNumber]
+    )
+VAR OrdersWithStatus =
+    ADDCOLUMNS(
+        Orders,
+        ""__po_status"",
+            VAR canc  = CALCULATE([Cancelled_Line_Count])
+            RETURN IF(canc > 0, ""Cancelled"", ""Active"")
+    )
+RETURN
+COUNTROWS(
+    FILTER(
+        OrdersWithStatus,
+        [__po_status] = ""Cancelled""
+    )
+)",1,Cancelled_Distinct_PO_Count,Cancelled_Distinct_PO_Count,Calculations,Count,0
+RDL00001_Procurement,RDL00001_Procurement,Active_Distinct_PO_Count,[Measures].[Active_Distinct_PO_Count],Active_Distinct_PO_Count,0,20,65535,-1,,"VAR Orders =
+    SUMMARIZE(
+        F_PurchaseOrderLine,
+        F_PurchaseOrderLine[OrderNumber]
+    )
+VAR OrdersWithStatus =
+    ADDCOLUMNS(
+        Orders,
+        ""__po_status"",
+            VAR total = CALCULATE([Total_Line_Count])
+            VAR canc  = CALCULATE([Cancelled_Line_Count])
+            RETURN IF(total > 0 && total = canc, ""Cancelled"", ""Active"")
+    )
+RETURN
+COUNTROWS(
+    FILTER(
+        OrdersWithStatus,
+        [__po_status] = ""Active""
+    )
+)",0,Active_Distinct_PO_Count,Active_Distinct_PO_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,Total_CountDistinct_PO,[Measures].[Total_CountDistinct_PO],Total_CountDistinct_PO,0,20,65535,-1,,[Active_Distinct_PO_Count] + [Cancelled_Distinct_PO_Count],0,Total_CountDistinct_PO,Total_CountDistinct_PO,Calculations,Total,
+RDL00001_Procurement,RDL00001_Procurement,Cancelled_Original_Amount_PO,[Measures].[Cancelled_Original_Amount_PO],Cancelled_Original_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM('F_PurchaseOrderLine'[OriginalAmount]),
+    FILTER(
+        'D_PO_CancelDate',
+        NOT ISBLANK('D_PO_CancelDate'[Date])
+    )
+)",0,Cancelled_Original_Amount_PO,Cancelled_Original_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,Total_Original_Amount_PO,[Measures].[Total_Original_Amount_PO],Total_Original_Amount_PO,0,5,65535,-1,,[Cancelled_Original_Amount_PO] + [Active_Original_Amount_PO],0,Total_Original_Amount_PO,Total_Original_Amount_PO,Calculations,Total,
+RDL00001_Procurement,RDL00001_Procurement,Active_Original_Amount_PO,[Measures].[Active_Original_Amount_PO],Active_Original_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM(F_PurchaseOrderLine[OriginalAmount]), 
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[CancelDate])
+    )
+)",0,Active_Original_Amount_PO,Active_Original_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,Total_Foreign_Amount_PO,[Measures].[Total_Foreign_Amount_PO],Total_Foreign_Amount_PO,0,5,65535,-1,,[Cancelled_Foreign_Amount_PO] + [Active_Foreign_Amount_PO],0,Total_Foreign_Amount_PO,Total_Foreign_Amount_PO,Calculations,Total,
+RDL00001_Procurement,RDL00001_Procurement,Cancelled_Foreign_Amount_PO,[Measures].[Cancelled_Foreign_Amount_PO],Cancelled_Foreign_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM(F_PurchaseOrderLine[ForeignAmount]),
+    FILTER(
+        'D_PO_CancelDate',
+        NOT ISBLANK('D_PO_CancelDate'[Date])
+    )
+)",0,Cancelled_Foreign_Amount_PO,Cancelled_Foreign_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,Active_Foreign_Amount_PO,[Measures].[Active_Foreign_Amount_PO],Active_Foreign_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM(F_PurchaseOrderLine[ForeignAmount]), 
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[CancelDate])
+    )
+)",0,Active_Foreign_Amount_PO,Active_Foreign_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,%_Cancelled_Lines,[Measures].[%_Cancelled_Lines],%_Cancelled_Lines,0,5,65535,-1,,"DIVIDE([Cancelled_Line_Count], [Total_Line_Count], 0)",1,%_Cancelled_Lines,%_Cancelled_Lines,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,%_Cancelled_Original_Amount_PO,[Measures].[%_Cancelled_Original_Amount_PO],%_Cancelled_Original_Amount_PO,0,5,65535,-1,,"DIVIDE([Cancelled_Original_Amount_PO], [Total_Original_Amount_PO], 0)",1,%_Cancelled_Original_Amount_PO,%_Cancelled_Original_Amount_PO,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,%_Cancelled_Foreign_Amount_PO,[Measures].[%_Cancelled_Foreign_Amount_PO],%_Cancelled_Foreign_Amount_PO,0,5,65535,-1,,"DIVIDE([Cancelled_Foreign_Amount_PO], [Total_Foreign_Amount_PO], 0)",0,%_Cancelled_Foreign_Amount_PO,%_Cancelled_Foreign_Amount_PO,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Foreign_Amount_PO,[Measures].[Not_Received_Foreign_Amount_PO],Not_Received_Foreign_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM(F_PurchaseOrderLine[ForeignAmount]),
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[ReceptionDate])
+    )
+)",0,Not_Received_Foreign_Amount_PO,Not_Received_Foreign_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Original_Amount_PO,[Measures].[Not_Received_Original_Amount_PO],Not_Received_Original_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    SUM(F_PurchaseOrderLine[OriginalAmount]),
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[ReceptionDate])
+    )
+)",1,Not_Received_Original_Amount_PO,Not_Received_Original_Amount_PO,Calculations,Sum,
+RDL00001_Procurement,RDL00001_Procurement,Display_cie,[Measures].[Display_cie],Display_cie,0,130,65535,-1,,"IF(
+    ISFILTERED(D_Company[Cie]),
+    SELECTEDVALUE(D_Company[Cie]),
+    BLANK()
+)",0,Display_cie,Display_cie,Calculations,Display,
+RDL00001_Procurement,RDL00001_Procurement,Display_cie+,[Measures].[Display_cie+],Display_cie+,0,130,65535,-1,,"IF(
+    ISFILTERED(D_Company[Cie]),
+    CONCATENATEX(
+        VALUES(D_Company[CieName]),
+        D_Company[CieName],
+        "", ""
+    ),
+    BLANK()
+)",1,Display_cie+,Display_cie+,Calculations,Display,
+RDL00001_Procurement,RDL00001_Procurement,Display_currency_Company+,[Measures].[Display_currency_Company+],Display_currency_Company+,0,130,65535,-1,,"IF(
+    ISFILTERED(D_Company[Cie]),
+    CONCATENATEX(
+        VALUES(D_Company[CurrencyCode]),
+        D_Company[CurrencyCode],
+        """", """"
+    ),
+    BLANK()
+)",0,Display_currency_Company+,Display_currency_Company+,Calculations,Display,
+RDL00001_Procurement,RDL00001_Procurement,Display_currency_Company,[Measures].[Display_currency_Company],Display_currency_Company,0,130,65535,-1,,"IF(
+    ISFILTERED(D_Company[Cie]),
+    SELECTEDVALUE(D_Company[CurrencyCode]),
+    BLANK()
+)",0,Display_currency_Company,Display_currency_Company,Calculations,Display,
+RDL00001_Procurement,RDL00001_Procurement,Parcial_PO_Recieved_Count,[Measures].[Parcial_PO_Recieved_Count],Parcial_PO_Recieved_Count,0,20,65535,-1,,"VAR OrdersWithAnyReceipt =
+    DISTINCT (
+        SELECTCOLUMNS (
+            FILTER ( F_PurchaseOrderLine, NOT ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),
+            ""OrderNumber"", F_PurchaseOrderLine[OrderNumber]
+        )
+    )
+VAR OrdersWithAnyMissingReceipt =
+    DISTINCT (
+        SELECTCOLUMNS (
+            FILTER ( F_PurchaseOrderLine, ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),
+            ""OrderNumber"", F_PurchaseOrderLine[OrderNumber]
+        )
+    )
+RETURN
+    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )",0,Parcial_PO_Recieved_Count,Parcial_PO_Recieved_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,Total_Amount_PO,[Measures].[Total_Amount_PO],Total_Amount_PO,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+ RETURN
+        SUMX(
+             SUMMARIZE(
+                         F_PurchaseOrderLine,
+                         D_PO_OrderDate[Date],
+                         FromCurrency[From_Currency],
+                        
+                           
+                         ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+            ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                    
+                   CALCULATE(
+                   
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency,
+                        REMOVEFILTERS(D_Branch)
+             )
+RETURN OriginalAmountCAD * ExchangeRate
+)",1,Total_Amount_PO,Total_Amount_PO,Calculations,Total,0.00
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Line_Count,[Measures].[Not_Received_Line_Count],Not_Received_Line_Count,0,20,65535,-1,,"CALCULATE(
+    COUNT(F_PurchaseOrderLine[LineNumber]),
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[ReceptionDate])
+    )
+)",1,Not_Received_Line_Count,Not_Received_Line_Count,Calculations,Count,0.00
+RDL00001_Procurement,RDL00001_Procurement,Not_Recieved_PO_Count,[Measures].[Not_Recieved_PO_Count],Not_Recieved_PO_Count,0,20,65535,-1,,"VAR OrdersWithAnyReceipt =
+    DISTINCT (
+        SELECTCOLUMNS (
+            FILTER ( F_PurchaseOrderLine, NOT ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),
+            ""OrderNumber"", F_PurchaseOrderLine[OrderNumber]
+        )
+    )
+VAR OrdersWithAnyMissingReceipt =
+    DISTINCT (
+        SELECTCOLUMNS (
+            FILTER ( F_PurchaseOrderLine, ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),
+            ""OrderNumber"", F_PurchaseOrderLine[OrderNumber]
+        )
+    )
+RETURN
+    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )",1,Not_Recieved_PO_Count,Not_Recieved_PO_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,Is_Line_Cancelled,[Measures].[Is_Line_Cancelled],Is_Line_Cancelled,0,20,65535,-1,,"VAR total = [Total_Line_Count]
+VAR canc  = [Cancelled_Line_Count]
+RETURN
+    IF(
+        total > 0 && total = canc,
+        1,
+        0
+    )",1,Is_Line_Cancelled,Is_Line_Cancelled,Calculations,Status,
+RDL00001_Procurement,RDL00001_Procurement,Total_Amount_PO_Tariffs,[Measures].[Total_Amount_PO_Tariffs],Total_Amount_PO_Tariffs,0,5,65535,-1,,"VAR TargetCurrency = IF(
+                          ISBLANK( SELECTEDVALUE (ToCurrency[To_Currency])),
+                          ""CAD"",   -- default
+                          SELECTEDVALUE (ToCurrency[To_Currency])
+                        )
+ RETURN
+        SUMX(
+             SUMMARIZE(
+                    FILTER(
+                           F_PurchaseOrderLine,
+                           F_PurchaseOrderLine[LineTypeCode] = ""ND""
+                       ),
+                    D_PO_OrderDate[Date],
+                    FromCurrency[From_Currency],
+                    ""OriginalAmountCAD"", SUM(F_PurchaseOrderLine[OriginalAmount_cad])
+               ),
+               VAR OriginalAmountCAD = [OriginalAmountCAD]
+               VAR ExchangeRate =
+                   CALCULATE(
+                        MAX('Currency Conversion by Date'[transaction_Mutiplicator]),
+                        ToCurrency[To_Currency] = TargetCurrency
+,
+                        REMOVEFILTERS(D_Branch)
+             )
+              RETURN OriginalAmountCAD * ExchangeRate
+            )",1,Total_Amount_PO_Tariffs,Total_Amount_PO_Tariffs,Calculations,Total,0.00
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Early_ReceiptDate_PromisedDeliveryDate,[Measures].[Ratio_Early_ReceiptDate_PromisedDeliveryDate],Ratio_Early_ReceiptDate_PromisedDeliveryDate,0,5,65535,-1,,"VAR EarlyDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] > F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(EarlyDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Early_ReceiptDate_PromisedDeliveryDate,Ratio_Early_ReceiptDate_PromisedDeliveryDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate,[Measures].[Ratio_OnTime_ReceiptDate_PromisedDeliveryDate],Ratio_OnTime_ReceiptDate_PromisedDeliveryDate,0,5,65535,-1,,"VAR OnTimeDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,5,65535,-1,,"VAR OnTimeWithToleranceDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                (
+                    F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] ||
+                    F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 1 ||
+                    F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 2
+                )
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeWithToleranceDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_PromisedDeliveryDate,[Measures].[Ratio_Late_ReceiptDate_PromisedDeliveryDate],Ratio_Late_ReceiptDate_PromisedDeliveryDate,0,5,65535,-1,,"VAR LateDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_PromisedDeliveryDate,Ratio_Late_ReceiptDate_PromisedDeliveryDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,5,65535,-1,,"VAR LateDeliveriesWithTolerance = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate] - 2
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveriesWithTolerance, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Early_ReceiptDate_RequestDate,[Measures].[Ratio_Early_ReceiptDate_RequestDate],Ratio_Early_ReceiptDate_RequestDate,0,5,65535,-1,,"VAR EarlyDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_RequestDate] > F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(EarlyDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Early_ReceiptDate_RequestDate,Ratio_Early_ReceiptDate_RequestDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_RequestDate,[Measures].[Ratio_OnTime_ReceiptDate_RequestDate],Ratio_OnTime_ReceiptDate_RequestDate,0,5,65535,-1,,"VAR OnTimeDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_RequestDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_RequestDate,Ratio_OnTime_ReceiptDate_RequestDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_RequestDate_WithTolerance,[Measures].[Ratio_OnTime_ReceiptDate_RequestDate_WithTolerance],Ratio_OnTime_ReceiptDate_RequestDate_WithTolerance,0,5,65535,-1,,"VAR OnTimeWithToleranceDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                (
+                    F_PurchaseOrderLine[Leadtime_RequestDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] ||
+                    F_PurchaseOrderLine[Leadtime_RequestDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 1 ||
+                    F_PurchaseOrderLine[Leadtime_RequestDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 2
+                )
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeWithToleranceDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_RequestDate_WithTolerance,Ratio_OnTime_ReceiptDate_RequestDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_RequestDate,[Measures].[Ratio_Late_ReceiptDate_RequestDate],Ratio_Late_ReceiptDate_RequestDate,0,5,65535,-1,,"VAR LateDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_RequestDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_RequestDate,Ratio_Late_ReceiptDate_RequestDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_RequestDate_WithTolerance,[Measures].[Ratio_Late_ReceiptDate_RequestDate_WithTolerance],Ratio_Late_ReceiptDate_RequestDate_WithTolerance,0,5,65535,-1,,"VAR LateDeliveriesWithTolerance = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_RequestDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate] - 2
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveriesWithTolerance, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_RequestDate_WithTolerance,Ratio_Late_ReceiptDate_RequestDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Early_ReceiptDate_OriginalPromisedDate,[Measures].[Ratio_Early_ReceiptDate_OriginalPromisedDate],Ratio_Early_ReceiptDate_OriginalPromisedDate,0,5,65535,-1,,"VAR EarlyDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] > F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(EarlyDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Early_ReceiptDate_OriginalPromisedDate,Ratio_Early_ReceiptDate_OriginalPromisedDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_OriginalPromisedDate,[Measures].[Ratio_OnTime_ReceiptDate_OriginalPromisedDate],Ratio_OnTime_ReceiptDate_OriginalPromisedDate,0,5,65535,-1,,"VAR OnTimeDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_OriginalPromisedDate,Ratio_OnTime_ReceiptDate_OriginalPromisedDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_OnTime_ReceiptDate_OriginalPromisedDate_WithTolerance,[Measures].[Ratio_OnTime_ReceiptDate_OriginalPromisedDate_WithTolerance],Ratio_OnTime_ReceiptDate_OriginalPromisedDate_WithTolerance,0,5,65535,-1,,"VAR OnTimeWithToleranceDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                (
+                    F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] ||
+                    F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 1 ||
+                    F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] = F_PurchaseOrderLine[Leadtime_ReceiptDate] + 2
+                )
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(OnTimeWithToleranceDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_OnTime_ReceiptDate_OriginalPromisedDate_WithTolerance,Ratio_OnTime_ReceiptDate_OriginalPromisedDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_OriginalPromisedDate,[Measures].[Ratio_Late_ReceiptDate_OriginalPromisedDate],Ratio_Late_ReceiptDate_OriginalPromisedDate,0,5,65535,-1,,"VAR LateDeliveries = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate]
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveries, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_OriginalPromisedDate,Ratio_Late_ReceiptDate_OriginalPromisedDate,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Ratio_Late_ReceiptDate_OriginalPromisedDate_WithTolerance,[Measures].[Ratio_Late_ReceiptDate_OriginalPromisedDate_WithTolerance],Ratio_Late_ReceiptDate_OriginalPromisedDate_WithTolerance,0,5,65535,-1,,"VAR LateDeliveriesWithTolerance = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]) &&
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate]) &&
+                F_PurchaseOrderLine[Leadtime_OriginalPromisedDate] < F_PurchaseOrderLine[Leadtime_ReceiptDate] - 2
+            )
+        )
+    VAR TotalLinesWithReceiptDate = 
+        COUNTROWS(
+            FILTER(
+                F_PurchaseOrderLine,
+                NOT ISBLANK(F_PurchaseOrderLine[Leadtime_ReceiptDate])
+            )
+        )
+    RETURN
+        IF(
+            TotalLinesWithReceiptDate > 0,
+            DIVIDE(LateDeliveriesWithTolerance, TotalLinesWithReceiptDate),
+            BLANK()
+        )",1,Ratio_Late_ReceiptDate_OriginalPromisedDate_WithTolerance,Ratio_Late_ReceiptDate_OriginalPromisedDate_WithTolerance,Calculations,KPI,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,Average_Leadtime_ReceiptDate,[Measures].[Average_Leadtime_ReceiptDate],Average_Leadtime_ReceiptDate,0,5,65535,-1,,AVERAGE(F_PurchaseOrderLine[Leadtime_ReceiptDate]),1,Average_Leadtime_ReceiptDate,Average_Leadtime_ReceiptDate,Calculations,LeadTime,0.00
+RDL00001_Procurement,RDL00001_Procurement,Average_Leadtime_OriginalPromisedDate,[Measures].[Average_Leadtime_OriginalPromisedDate],Average_Leadtime_OriginalPromisedDate,0,5,65535,-1,,AVERAGE(F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]),1,Average_Leadtime_OriginalPromisedDate,Average_Leadtime_OriginalPromisedDate,Calculations,LeadTime,0.00
+RDL00001_Procurement,RDL00001_Procurement,Average_Leadtime_PromisedDeliveryDate,[Measures].[Average_Leadtime_PromisedDeliveryDate],Average_Leadtime_PromisedDeliveryDate,0,5,65535,-1,,AVERAGE(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]),1,Average_Leadtime_PromisedDeliveryDate,Average_Leadtime_PromisedDeliveryDate,Calculations,LeadTime,0.00
+RDL00001_Procurement,RDL00001_Procurement,Average_Leadtime_RequestDate,[Measures].[Average_Leadtime_RequestDate],Average_Leadtime_RequestDate,0,5,65535,-1,,AVERAGE(F_PurchaseOrderLine[Leadtime_RequestDate]),1,Average_Leadtime_RequestDate,Average_Leadtime_RequestDate,Calculations,LeadTime,0.00
+RDL00001_Procurement,RDL00001_Procurement,Active_ItemInPO_Distinct_Count,[Measures].[Active_ItemInPO_Distinct_Count],Active_ItemInPO_Distinct_Count,0,20,65535,-1,,"CALCULATE(
+    DISTINCTCOUNT(F_PurchaseOrderLine[ItemKey]),
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[CancelDate]) ||
+        NOT(ISBLANK(RELATED('D_ItemMaster'[SecondItemNumber])))
+    )
+)",1,Active_ItemInPO_Distinct_Count,Active_ItemInPO_Distinct_Count,Calculations,Count,0
+RDL00001_Procurement,RDL00001_Procurement,Active_ItemInPO_Count,[Measures].[Active_ItemInPO_Count],Active_ItemInPO_Count,0,20,65535,-1,,"CALCULATE(
+        COUNT(F_PurchaseOrderLine[ItemKey]),
+        
+FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[CancelDate]) ||
+        NOT(ISBLANK(RELATED('D_ItemMaster'[SecondItemNumber])))
+    )
+    )",1,Active_ItemInPO_Count,Active_ItemInPO_Count,Calculations,Count,0
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Amount_PO,[Measures].[YTD_Total_Amount_PO],YTD_Total_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Total_Amount_PO,YTD_Total_Amount_PO,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Cancelled_Amount_PO,[Measures].[YTD_Cancelled_Amount_PO],YTD_Cancelled_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    [Cancelled_Amount_PO],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Cancelled_Amount_PO,YTD_Cancelled_Amount_PO,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Active_Line_Count,[Measures].[YTD_Active_Line_Count],YTD_Active_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Active_Line_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    ),
+    ISBLANK('D_PO_CancelDate'[Date])
+)",1,YTD_Active_Line_Count,YTD_Active_Line_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Cancelled_Line_Count,[Measures].[YTD_Cancelled_Line_Count],YTD_Cancelled_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Cancelled_Line_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Cancelled_Line_Count,YTD_Cancelled_Line_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Line_Count,[Measures].[YTD_Total_Line_Count],YTD_Total_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Total_Line_Count],
+    DATESYTD(
+        'D_PO_OrderDate'[Date],
+        ""02-28"" // Fiscal year ends on February 28th
+    )
+)",1,YTD_Total_Line_Count,YTD_Total_Line_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Distinct_PO_Count,[Measures].[YTD_Total_Distinct_PO_Count],YTD_Total_Distinct_PO_Count,0,20,65535,-1,,"CALCULATE(
+    DISTINCTCOUNT('F_PurchaseOrderLine'[OrderNumber]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Total_Distinct_PO_Count,YTD_Total_Distinct_PO_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Cancelled_Distinct_PO_Count,[Measures].[YTD_Cancelled_Distinct_PO_Count],YTD_Cancelled_Distinct_PO_Count,0,20,65535,-1,,"CALCULATE(
+    [Cancelled_Distinct_PO_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Cancelled_Distinct_PO_Count,YTD_Cancelled_Distinct_PO_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Amount_PO_Freight,[Measures].[YTD_Total_Amount_PO_Freight],YTD_Total_Amount_PO_Freight,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Freight],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Total_Amount_PO_Freight,YTD_Total_Amount_PO_Freight,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Amount_PO_Tariffs,[Measures].[YTD_Total_Amount_PO_Tariffs],YTD_Total_Amount_PO_Tariffs,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Tariffs],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Total_Amount_PO_Tariffs,YTD_Total_Amount_PO_Tariffs,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Total_Amount_PO_Rush,[Measures].[YTD_Total_Amount_PO_Rush],YTD_Total_Amount_PO_Rush,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Rush],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Total_Amount_PO_Rush,YTD_Total_Amount_PO_Rush,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Average_Leadtime_ReceiptDate,[Measures].[YTD_Average_Leadtime_ReceiptDate],YTD_Average_Leadtime_ReceiptDate,0,5,65535,-1,,"CALCULATE(
+    AVERAGE('F_PurchaseOrderLine'[Leadtime_ReceiptDate]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Average_Leadtime_ReceiptDate,YTD_Average_Leadtime_ReceiptDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Average_Leadtime_PromisedDeliveryDate,[Measures].[YTD_Average_Leadtime_PromisedDeliveryDate],YTD_Average_Leadtime_PromisedDeliveryDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_PromisedDeliveryDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Average_Leadtime_PromisedDeliveryDate,YTD_Average_Leadtime_PromisedDeliveryDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Average_Leadtime_OriginalPromisedDate,[Measures].[YTD_Average_Leadtime_OriginalPromisedDate],YTD_Average_Leadtime_OriginalPromisedDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_OriginalPromisedDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Average_Leadtime_OriginalPromisedDate,YTD_Average_Leadtime_OriginalPromisedDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Average_Leadtime_RequestDate,[Measures].[YTD_Average_Leadtime_RequestDate],YTD_Average_Leadtime_RequestDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_RequestDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Average_Leadtime_RequestDate,YTD_Average_Leadtime_RequestDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Active_ItemInPO_Distinct_Count,[Measures].[YTD_Active_ItemInPO_Distinct_Count],YTD_Active_ItemInPO_Distinct_Count,0,20,65535,-1,,"CALCULATE(
+    [Active_ItemInPO_Distinct_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Active_ItemInPO_Distinct_Count,YTD_Active_ItemInPO_Distinct_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Active_ItemInPO_Count,[Measures].[YTD_Active_ItemInPO_Count],YTD_Active_ItemInPO_Count,0,20,65535,-1,,"CALCULATE(
+    [Active_ItemInPO_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,YTD_Active_ItemInPO_Count,YTD_Active_ItemInPO_Count,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Amount_PO,[Measures].[LYTD_Total_Amount_PO],LYTD_Total_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Amount_PO,LYTD_Total_Amount_PO,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Cancelled_Amount_PO,[Measures].[LYTD_Cancelled_Amount_PO],LYTD_Cancelled_Amount_PO,0,5,65535,-1,,"CALCULATE(
+    [Cancelled_Amount_PO],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Cancelled_Amount_PO,LYTD_Cancelled_Amount_PO,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Active_Line_Count,[Measures].[LYTD_Active_Line_Count],LYTD_Active_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Active_Line_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    ),
+    ISBLANK('D_PO_CancelDate'[Date])
+)",1,LYTD_Active_Line_Count,LYTD_Active_Line_Count,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Cancelled_Line_Count,[Measures].[LYTD_Cancelled_Line_Count],LYTD_Cancelled_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Cancelled_Line_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Cancelled_Line_Count,LYTD_Cancelled_Line_Count,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Line_Count,[Measures].[LYTD_Total_Line_Count],LYTD_Total_Line_Count,0,20,65535,-1,,"CALCULATE(
+    [Total_Line_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Line_Count,LYTD_Total_Line_Count,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Distinct_PO_Count,[Measures].[LYTD_Total_Distinct_PO_Count],LYTD_Total_Distinct_PO_Count,0,20,65535,-1,,"CALCULATE(
+    DISTINCTCOUNT('F_PurchaseOrderLine'[OrderNumber]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Distinct_PO_Count,LYTD_Total_Distinct_PO_Count,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Cancelled_Distinct_PO_Count,[Measures].[LYTD_Cancelled_Distinct_PO_Count],LYTD_Cancelled_Distinct_PO_Count,0,20,65535,-1,,"CALCULATE(
+    [Cancelled_Distinct_PO_Count],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Cancelled_Distinct_PO_Count,LYTD_Cancelled_Distinct_PO_Count,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Amount_PO_Freight,[Measures].[LYTD_Total_Amount_PO_Freight],LYTD_Total_Amount_PO_Freight,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Freight],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Amount_PO_Freight,LYTD_Total_Amount_PO_Freight,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Amount_PO_Tariffs,[Measures].[LYTD_Total_Amount_PO_Tariffs],LYTD_Total_Amount_PO_Tariffs,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Tariffs],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Amount_PO_Tariffs,LYTD_Total_Amount_PO_Tariffs,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Total_Amount_PO_Rush,[Measures].[LYTD_Total_Amount_PO_Rush],LYTD_Total_Amount_PO_Rush,0,5,65535,-1,,"CALCULATE(
+    [Total_Amount_PO_Rush],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Total_Amount_PO_Rush,LYTD_Total_Amount_PO_Rush,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_ReceiptDate,[Measures].[LYTD_Average_Leadtime_ReceiptDate],LYTD_Average_Leadtime_ReceiptDate,0,5,65535,-1,,"CALCULATE(
+    AVERAGE('F_PurchaseOrderLine'[Leadtime_ReceiptDate]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Average_Leadtime_ReceiptDate,LYTD_Average_Leadtime_ReceiptDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_SupplierFirstPromisedDate,[Measures].[LYTD_Average_Leadtime_SupplierFirstPromisedDate],LYTD_Average_Leadtime_SupplierFirstPromisedDate,0,20,65535,-1,,"CALCULATE(
+    [Average_Leadtime_SupplierFirstPromisedDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",0,LYTD_Average_Leadtime_SupplierFirstPromisedDate,LYTD_Average_Leadtime_SupplierFirstPromisedDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_OriginalPromisedDate,[Measures].[LYTD_Average_Leadtime_OriginalPromisedDate],LYTD_Average_Leadtime_OriginalPromisedDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_OriginalPromisedDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Average_Leadtime_OriginalPromisedDate,LYTD_Average_Leadtime_OriginalPromisedDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_PromisedDeliveryDate,[Measures].[LYTD_Average_Leadtime_PromisedDeliveryDate],LYTD_Average_Leadtime_PromisedDeliveryDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_PromisedDeliveryDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Average_Leadtime_PromisedDeliveryDate,LYTD_Average_Leadtime_PromisedDeliveryDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_RequestDate,[Measures].[LYTD_Average_Leadtime_RequestDate],LYTD_Average_Leadtime_RequestDate,0,5,65535,-1,,"CALCULATE(
+    [Average_Leadtime_RequestDate],
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",1,LYTD_Average_Leadtime_RequestDate,LYTD_Average_Leadtime_RequestDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,MTD_Average_Leadtime_ReceiptDate,[Measures].[MTD_Average_Leadtime_ReceiptDate],MTD_Average_Leadtime_ReceiptDate,0,5,65535,-1,,"CALCULATE(
+    AVERAGE('F_PurchaseOrderLine'[Leadtime_ReceiptDate]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+            && 'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth])
+            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+    )
+)",1,MTD_Average_Leadtime_ReceiptDate,MTD_Average_Leadtime_ReceiptDate,Calculations,MTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,BuyerNumber_Distinct_Count,[Measures].[BuyerNumber_Distinct_Count],BuyerNumber_Distinct_Count,0,20,65535,-1,,DISTINCTCOUNT(F_PurchaseOrderLine[BuyerNumber]),1,BuyerNumber_Distinct_Count,BuyerNumber_Distinct_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Distinct_Item_Count,[Measures].[Not_Received_Distinct_Item_Count],Not_Received_Distinct_Item_Count,0,5,65535,-1,,"CALCULATE (
+    SUMX (
+        DISTINCT (
+            SELECTCOLUMNS (
+                F_PurchaseOrderLine,
+                ""ItemNumber"", RELATED(D_ItemMaster[SecondItemNumber]),
+                ""QuantityOrder"", F_PurchaseOrderLine[QuantityOrder]
+            )
+        ),
+        [QuantityOrder]
+    ),
+    FILTER (
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[ReceptionDate]) &&
+        ISBLANK(F_PurchaseOrderLine[CancelDate]) &&
+        NOT(ISBLANK(RELATED(D_ItemMaster[SecondItemNumber])))
+    )
+)",1,Not_Received_Distinct_Item_Count,Not_Received_Distinct_Item_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,Not_Received_Item_Count,[Measures].[Not_Received_Item_Count],Not_Received_Item_Count,0,5,65535,-1,,"SUMX(
+    FILTER(
+        F_PurchaseOrderLine,
+        ISBLANK(F_PurchaseOrderLine[ReceptionDate])
+            && NOT(ISBLANK(RELATED('D_ItemMaster'[SecondItemNumber])))
+            && ISBLANK(F_PurchaseOrderLine[CancelDate])
+    ),
+    F_PurchaseOrderLine[QuantityOrder]
+)",1,Not_Received_Item_Count,Not_Received_Item_Count,Calculations,Count,
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Average_Leadtime_JDE,[Measures].[LYTD_Average_Leadtime_JDE],LYTD_Average_Leadtime_JDE,0,20,65535,-1,,"CALCULATE(
+    AVERAGE('Purchase Order Line'[Leadtime_JDE]),
+    FILTER(
+        ALL('D_PO_OrderDate'),
+        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1
+            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+    )
+)",0,LYTD_Average_Leadtime_JDE,LYTD_Average_Leadtime_JDE,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,[Measures].[YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate],YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Early_ReceiptDate_PromisedDeliveryDate],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])
+    && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",1,YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",1,YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",1,YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,[Measures].[LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate],LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Early_ReceiptDate_PromisedDeliveryDate],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&
+    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+)",1,LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&
+    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+)",1,LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,[Measures].[LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&
+    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+)",1,LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,[Measures].[YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance],YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",1,YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,YTD_Ratio_Late_ReceiptDate_RequestDate,[Measures].[YTD_Ratio_Late_ReceiptDate_RequestDate],YTD_Ratio_Late_ReceiptDate_RequestDate,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_RequestDate],
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",1,YTD_Ratio_Late_ReceiptDate_RequestDate,YTD_Ratio_Late_ReceiptDate_RequestDate,Calculations,YTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,[Measures].[MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance],MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],
+    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",0,MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance,Calculations,MTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,MTD_Ratio_Late_ReceiptDate_RequestDate,[Measures].[MTD_Ratio_Late_ReceiptDate_RequestDate],MTD_Ratio_Late_ReceiptDate_RequestDate,0,20,65535,-1,,"CALCULATE(
+    [Ratio_Late_ReceiptDate_RequestDate],
+    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&
+    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])
+)",0,MTD_Ratio_Late_ReceiptDate_RequestDate,MTD_Ratio_Late_ReceiptDate_RequestDate,Calculations,MTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,AverageRequest_versus_AveragePromisedDelivery,[Measures].[AverageRequest_versus_AveragePromisedDelivery],AverageRequest_versus_AveragePromisedDelivery,0,5,65535,-1,,"AVERAGEX(
+    FILTER(
+        F_PurchaseOrderLine,
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate])
+    ),
+    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]
+)",1,AverageRequest_versus_AveragePromisedDelivery,AverageRequest_versus_AveragePromisedDelivery,Calculations,LeadTime,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,AverageRequest_versus_AverageSupplierFirstPromised,[Measures].[AverageRequest_versus_AverageSupplierFirstPromised],AverageRequest_versus_AverageSupplierFirstPromised,0,20,65535,-1,,"AVERAGEX(
+    FILTER(
+        F_PurchaseOrderLine,
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate])
+    ),
+    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate]
+)",0,AverageRequest_versus_AverageSupplierFirstPromised,AverageRequest_versus_AverageSupplierFirstPromised,Calculations,YTD,0.00%;-0.00%;0.00%
+RDL00001_Procurement,RDL00001_Procurement,LYTD_AverageRequest_versus_AveragePromisedDelivery,[Measures].[LYTD_AverageRequest_versus_AveragePromisedDelivery],LYTD_AverageRequest_versus_AveragePromisedDelivery,0,5,65535,-1,,"AVERAGEX(
+    FILTER(
+        F_PurchaseOrderLine,
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate])
+    ),
+    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]
+)",0,LYTD_AverageRequest_versus_AveragePromisedDelivery,LYTD_AverageRequest_versus_AveragePromisedDelivery,Calculations,LYTD,0.00
+RDL00001_Procurement,RDL00001_Procurement,LYTD_AverageRequest_versus_AverageSupplierFirstPromised,[Measures].[LYTD_AverageRequest_versus_AverageSupplierFirstPromised],LYTD_AverageRequest_versus_AverageSupplierFirstPromised,0,20,65535,-1,,"CALCULATE(
+    AVERAGEX(
+        FILTER(
+            F_PurchaseOrderLine,
+            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&
+            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate])
+        ),
+        F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate]
+    ),
+    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&
+    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)
+)",0,LYTD_AverageRequest_versus_AverageSupplierFirstPromised,LYTD_AverageRequest_versus_AverageSupplierFirstPromised,Calculations,LYTD,0.00

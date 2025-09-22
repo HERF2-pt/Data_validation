@@ -98,9 +98,31 @@ BEGIN
 
        ,IBUPMJ_DateUpdated  as  DateModification  
 
+       ,IBVEND_PrimaryLastVendorNo  
+
+       ,T3RMK_NameRemark  
+
 	    into  ##TMP_F4102  
 
-	    from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]  /*T1  
+	    from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]    
+
+	    LEFT  JOIN  (SELECT  TRIM(U.T3MCU_CostCenter)                                          T3MCU_CostCenter  
+
+           ,  CAST(U.[T3SBN1_SuppDataNumericKey1]  AS  CHAR)  T3SBN1_SuppDataNumericKey1  
+
+           ,  MAX(T3RMK_NameRemark)                                                T3RMK_NameRemark  
+
+FROM  [RDL00001_EnterpriseDataLanding].JDE_BI_OPS.V_F00092  U  
+
+GROUP  BY  U.T3MCU_CostCenter  
+
+               ,  U.[T3SBN1_SuppDataNumericKey1])  U  
+
+    ON  trim(IBMCU_CostCenter)  =  TRIM(U.T3MCU_CostCenter)  
+
+    AND  CAST(IBITM_IdentifierShortItem  AS  CHAR)  =  CAST(U.[T3SBN1_SuppDataNumericKey1]  AS  CHAR)  
+
+	    /*T1  
 
 	    inner  join  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0006]    T2  
 
@@ -198,7 +220,11 @@ Truncate  table  [dbo].[d_ItemBranch]
 
  ,ConcatBranchSecondItem  
 
- ,DateModification)  
+ ,DateUpdated  
+
+ ,[PreferredSupplier]  
+
+ ,[EngPoolCode])  
 
   
 
@@ -233,7 +259,6 @@ select
        ,T3.DRDL01_Description001  as  PRP2Desc  
 
        ,T4.DRDL01_Description001  as  PRP3Desc  
-
        ,IBORIG_CountryOfOrigin  as  CountryOfOrigin  
 
        ,  IBROPI_ReorderPointInput  as  ReOrderInput  
@@ -259,6 +284,10 @@ select
        ,CONCAT(IBMCU_CostCenter ,'-' ,IBLITM_Identifier2ndItem)  as  ConcatBranchSecondItem  
 
        ,DateModification  
+
+       ,IBVEND_PrimaryLastVendorNo  
+
+       ,T3RMK_NameRemark  
 
   
 

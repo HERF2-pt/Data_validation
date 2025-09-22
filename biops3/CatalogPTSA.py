@@ -39,7 +39,7 @@ SELECT
 FROM [RDL00001_EnterpriseDataWarehouse].INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME NOT LIKE '%Test%'
 ORDER BY TABLE_NAME,COLUMN_NAME""")
-
+# DW_dboPD.to_csv('DW_dboPD.csv', index=False)
 
 DW_dboPP = execute_queryPP(f"""
 SELECT 

@@ -14,7 +14,7 @@ def execute_dax_query(dataSource='cube01Procurementv2PP.premiertech.com',
 
     Parameters:
 
-        query_string (str): The DAX query to execute.
+        query_string (str): The DAX query to execute.piu
 
     Returns:
         pd.DataFrame: Query results as a DataFrame.

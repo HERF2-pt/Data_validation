@@ -1,353 +1,529 @@
-CREATE  PROCEDURE  [dbo].[Load_F_ProductCost_Purchase]  
+CREATE  PROCEDURE  [dbo].[Load_F_ProductCost_Purchase]
 
-AS  
 
-BEGIN  
+AS
 
-  
 
-        --  =============================================  
+BEGIN
 
-        --  Author:		<Author , ,BART>  
 
-        --  Create  date:  <Create  Date ,2025-09-09 ,>  
 
-        --  Description:	EXEC  [dbo].[Load_F_ProductCost_Purchase]    
 
-        --  =============================================  
 
-        DECLARE  @IdentityAuditIdInsert    decimal(18 ,  0)  
+        --  ============================================= 
 
-                     ,  @IdentityAuditIdUpdate    decimal(18 ,  0)  
 
-                     ,  @IdentityAuditIdDelete    decimal(18 ,  0)  
+        --  Author:		<Author , ,BART> 
 
-                     ,  @RowCountAffectedInsert  decimal(18 ,  0)  
 
-                     ,  @RowCountAffectedUpdate  decimal(18 ,  0)  
+        --  Create  date:  <Create  Date ,2025-09-09 ,> 
 
-                     ,  @RowCountAffectedDelete  decimal(18 ,  0)  
 
-                     ,  @Database                              varchar(22)  
+        --  Description:	EXEC  [dbo].[Load_F_ProductCost_Purchase]   
 
-        SET  @Database  =  'RDL00001_EnterpriseDataStaging'  
 
-  
+        --  ============================================= 
 
-        /***********************************************************************************************  
 
-								REQUETE  PRINCIPALE  (MERGE)  
+        DECLARE  @IdentityAuditIdInsert    DECIMAL(18 ,  0) 
+ 
 
-										DEBUT  
+                     ,  @IdentityAuditIdUpdate    DECIMAL(18 ,  0) 
+ 
 
-************************************************************************************************/  
+                     ,  @IdentityAuditIdDelete    DECIMAL(18 ,  0) 
+ 
 
-  
+                     ,  @RowCountAffectedInsert  DECIMAL(18 ,  0) 
+ 
 
-        --  Insert  empty  ROWS  into  the  AUDIT  Table  for  inserted  and  updated  records  
+                     ,  @RowCountAffectedUpdate  DECIMAL(18 ,  0) 
+ 
 
-        EXEC  @IdentityAuditIdInsert  =  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  0  
+                     ,  @RowCountAffectedDelete  DECIMAL(18 ,  0) 
+ 
 
-                                                                                                                                                                                   ,  @Database  
+                     ,  @Database                              VARCHAR(22)
 
-                                                                                                                                                                                   ,  'F_ProductCost_Purchase'  
 
-                                                                                                                                                                                   ,  'I'  
+        SET  @Database  =  'RDL00001_EnterpriseDataStaging'
 
-                                                                                                                                                                                   ,  'F'  
 
-                                                                                                                                                                                   ,  0  
 
-                                                                                                                                                                                   ,  0  
 
-                                                                                                                                                                                   ,  0  
 
-                                                                                                                                                                                   ,  'N';  
+        /*********************************************************************************************** 
+ 
 
-        EXEC  @IdentityAuditIdUpdate  =  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  0  
+								REQUETE  PRINCIPALE  (MERGE) 
+ 
 
-                                                                                                                                                                                   ,  @Database  
+										DEBUT 
+ 
 
-                                                                                                                                                                                   ,  'F_ProductCost_Purchase'  
+************************************************************************************************/
 
-                                                                                                                                                                                   ,  'U'  
 
-                                                                                                                                                                                   ,  'F'  
 
-                                                                                                                                                                                   ,  0  
 
-                                                                                                                                                                                   ,  0  
 
-                                                                                                                                                                                   ,  0  
+        --  Insert  empty  ROWS  into  the  AUDIT  Table  for  inserted  and  updated  records 
 
-                                                                                                                                                                                   ,  'N';  
 
-        DROP  TABLE  IF  EXISTS  #SourceData;  
+        EXEC  @IdentityAuditIdInsert  =  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  0 
+ 
 
-        SELECT  DRDL02_Description01002  
+                                                                                                                                                                                   ,  @Database 
+ 
 
-                   ,  DRDL01_Description001  
+                                                                                                                                                                                   ,  'F_ProductCost_Purchase' 
+ 
 
-                   ,  COMCU_CostCenter  
+                                                                                                                                                                                   ,  'I' 
+ 
 
-                   ,  COLOCN_Location  
+                                                                                                                                                                                   ,  'F' 
+ 
 
-                   ,  COITM_IdentifierShortItem  
+                                                                                                                                                                                   ,  0 
+ 
 
-                   ,  CCCRCD  
+                                                                                                                                                                                   ,  0 
+ 
 
-                   ,  COLEDG_LedgType  
+                                                                                                                                                                                   ,  0 
+ 
 
-                   ,  COUNCS_AmountUnitCost  
+                                                                                                                                                                                   ,  'N';
 
-                   ,  CCCO  
 
-                   ,  Cost_Type  
+        EXEC  @IdentityAuditIdUpdate  =  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  0 
+ 
 
-        INTO  #SourceData  
+                                                                                                                                                                                   ,  @Database 
+ 
 
-        FROM  
+                                                                                                                                                                                   ,  'F_ProductCost_Purchase' 
+ 
 
-        (  
+                                                                                                                                                                                   ,  'U' 
+ 
 
-                SELECT  TRIM(f05.DRDL02_Description01002)      AS  DRDL02_Description01002  
+                                                                                                                                                                                   ,  'F' 
+ 
 
-                           ,  TRIM(f05.DRDL01_Description001)          AS  DRDL01_Description001  
+                                                                                                                                                                                   ,  0 
+ 
 
-                           ,  TRIM(pc.COMCU_CostCenter)                      AS  COMCU_CostCenter  
+                                                                                                                                                                                   ,  0 
+ 
 
-                           ,  pc.COLOCN_Location  
+                                                                                                                                                                                   ,  0 
+ 
 
-                           ,  pc.COITM_IdentifierShortItem  
+                                                                                                                                                                                   ,  'N';
 
-                           ,  f10.CCCRCD  
 
-                           ,  TRIM(pc.COLEDG_LedgType)                        AS  COLEDG_LedgType  
+        DROP  TABLE  IF  EXISTS  #SourceData;
 
-                           ,  ISNULL(pc.COUNCS_AmountUnitCost ,  0)  AS  COUNCS_AmountUnitCost  
 
-                           ,  f10.CCCO  
+        SELECT DRDL02_Description01002 
+ 
 
-                           ,  CASE  
+                    ,DRDL01_Description001 
+ 
 
-                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  7  THEN  
+                    ,COMCU_CostCenter 
+ 
 
-                                              'Standard'  
+                    ,COLOCN_Location 
+ 
 
-                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  1  THEN  
+                    ,COITM_IdentifierShortItem 
+ 
 
-                                              'Last  In'  
+                    ,CCCRCD 
+ 
 
-                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  22  THEN  
+                    ,COLEDG_LedgType 
+ 
 
-                                              'Last  In  Primary  Vendor'  
+                    ,COUNCS_AmountUnitCost 
+ 
 
-                                      ELSE  
+                    ,CCCO 
+ 
 
-                                              ''  
+                    ,Cost_Type
 
-                              END                                                                  AS  Cost_Type  
 
-                           ,  ROW_NUMBER()  OVER  (PARTITION  BY  TRIM(pc.COMCU_CostCenter)  
+        INTO  #SourceData
 
-                                                                                           ,  pc.COITM_IdentifierShortItem  
 
-                                                                                           ,  TRIM(pc.COLEDG_LedgType)  
+        FROM
 
-                                                                    ORDER  BY  [COUPMJ_DateUpdated]  DESC  
 
-                                                                  )                                  AS  rn  
+                ( 
+ 
 
-                FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4105]                    pc  
+                SELECT TRIM(f05.DRDL02_Description01002)      AS  DRDL02_Description01002 
+ 
 
-                        LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]  f02  
+                            ,TRIM(f05.DRDL01_Description001)          AS  DRDL01_Description001 
+ 
 
-                                ON  pc.COITM_IdentifierShortItem  =  f02.IBITM_IdentifierShortItem  
+                            ,TRIM(pc.COMCU_CostCenter)                      AS  COMCU_CostCenter 
+ 
 
-                                      AND  TRIM(pc.COMCU_CostCenter)  =  TRIM(f02.IBMCU_CostCenter)  
+                            ,pc.COLOCN_Location 
+ 
 
-                        LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0005]  f05  
+                            ,pc.COITM_IdentifierShortItem 
+ 
 
-                                ON  TRIM(pc.COLEDG_LedgType)  =  TRIM(f05.DRKY_UserDefinedCode)  
+                            ,f10.CCCRCD 
+ 
 
-                                      AND  TRIM(f05.DRSY_ProductCode)  =  '40'  
+                            ,TRIM(pc.COLEDG_LedgType)                        AS  COLEDG_LedgType 
+ 
 
-                                      AND  TRIM(f05.DRRT_UserDefinedCodes)  =  'CM'  
+                            ,ISNULL(pc.COUNCS_AmountUnitCost ,  0)  AS  COUNCS_AmountUnitCost 
+ 
 
-                        LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0006]  f06  
+                            ,f10.CCCO 
+ 
 
-                                ON  f06.MCMCU_CostCenter  =  pc.COMCU_CostCenter  
+                            ,CASE 
+ 
 
-                        LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE].[F0010]                    f10  
+                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  7  THEN 
+ 
 
-                                ON  f06.MCCO_Company  =  f10.CCCO  
+                                              'Standard' 
+ 
 
-                WHERE  TRIM(f02.IBSTKT_StockingType)  IN  (  'P' ,  'B' ,  'O' ,  'U' ,  'X' ,  'H'  )  
+                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  1  THEN 
+ 
 
-                            AND  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  IN  (  1 ,  7 ,  22  )  
+                                              'Last  In' 
+ 
 
-                            AND  pc.[COLOTN_Lot]  =  ''  
+                                      WHEN  TRY_CAST(pc.COLEDG_LedgType  AS  INT)  =  22  THEN 
+ 
 
-        )  AS  ranked  
+                                              'Last  In  Primary  Vendor' 
+ 
 
-        WHERE  rn  =  1  
+                                      ELSE 
+ 
 
-        DECLARE  @MergeSummary  TABLE  (ActionTaken  NVARCHAR(20));  
+                                              '' 
+ 
 
-        Merge  [dbo].[F_ProductCost_Purchase]  as  t  
+                              END                                                                  AS  Cost_Type 
+ 
 
-        Using  #SourceData  as  s  
+                            ,ROW_NUMBER()  OVER  (PARTITION  BY  TRIM(pc.COMCU_CostCenter) 
+ 
 
-        ON  t.COMCU_CostCenter  =  s.COMCU_CostCenter  
+                                                                                           ,  pc.COITM_IdentifierShortItem 
+ 
 
-              AND  t.COITM_IdentifierShortItem  =  s.COITM_IdentifierShortItem  
+                                                                                           ,  TRIM(pc.COLEDG_LedgType) 
+ 
 
-              AND  t.COLEDG_LedgType  =  s.COLEDG_LedgType  
+                                                                    ORDER  BY  [COUPMJ_DateUpdated]  DESC 
+ 
 
-              AND  t.is_current  =  1  
+                                                                  )                                  AS  rn
 
-        WHEN  MATCHED  AND  t.COUNCS_AmountUnitCost  <>  s.COUNCS_AmountUnitCost  THEN  
 
-                UPDATE  SET  t.[valid_to]  =  GETDATE()-1  
+                FROM [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4105]                    pc
 
-                                   ,  t.is_current  =  0  
 
-        WHEN  NOT  MATCHED  BY  TARGET  THEN  
+                        LEFT JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]  f02
 
-                INSERT  
 
-                (  
+                        ON  pc.COITM_IdentifierShortItem  =  f02.IBITM_IdentifierShortItem
 
-                        [DRDL02_Description01002]  
 
-                     ,  [DRDL01_Description001]  
+                                AND TRIM(pc.COMCU_CostCenter)  =  TRIM(f02.IBMCU_CostCenter)
 
-                     ,  [COMCU_CostCenter]  
 
-                     ,  [COLOCN_Location]  
+                        LEFT JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0005]  f05
 
-                     ,  [COITM_IdentifierShortItem]  
 
-                     ,  [CCCRCD]  
+                        ON  TRIM(pc.COLEDG_LedgType)  =  TRIM(f05.DRKY_UserDefinedCode)
 
-                     ,  [COLEDG_LedgType]  
 
-                     ,  [COUNCS_AmountUnitCost]  
+                                AND TRIM(f05.DRSY_ProductCode)  =  '40'
 
-                     ,  [CCCO]  
 
-                     ,  [Cost_Type]  
+                                AND TRIM(f05.DRRT_UserDefinedCodes)  =  'CM'
 
-                     ,  [Date]  
 
-                     ,  [valid_from]  
+                        LEFT JOIN [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0006]  f06
 
-                     ,  [valid_to]  
 
-                     ,  [is_current]  
+                        ON  f06.MCMCU_CostCenter  =  pc.COMCU_CostCenter
 
-                )  
 
-                VALUES  
+                        LEFT JOIN [RDL00001_EnterpriseDataLanding].[JDE].[F0010]                    f10
 
-                (s.[DRDL02_Description01002]  
 
-               ,  s.[DRDL01_Description001]  
+                        ON  f06.MCCO_Company  =  f10.CCCO
 
-               ,  s.[COMCU_CostCenter]  
 
-               ,  s.[COLOCN_Location]  
+                WHERE  TRIM(f02.IBSTKT_StockingType)  IN  (  'P' ,  'B' ,  'O' ,  'U' ,  'X' ,  'H'  )
 
-               ,  s.[COITM_IdentifierShortItem]  
 
-               ,  s.[CCCRCD]  
+                        AND TRY_CAST(pc.COLEDG_LedgType  AS  INT)  IN  (  1 ,  7 ,  22  )
 
-               ,  s.[COLEDG_LedgType]  
 
-               ,  s.[COUNCS_AmountUnitCost]  
+                        AND pc.[COLOTN_Lot]  =  '' 
+ 
 
-               ,  s.[CCCO]  
+        )  AS  ranked
 
-               ,  s.[Cost_Type]  
 
-               ,  DATEADD(day ,  DATEDIFF(day ,  0 ,  GETDATE()) ,  0)  
+        WHERE  rn  =  1
 
-               ,  GETDATE()  
 
-               ,  '9999-12-31'  
+        DECLARE  @MergeSummary  TABLE  (ActionTaken NVARCHAR(20));
 
-               ,  1  
 
-                )  
+        MERGE  [dbo].[F_ProductCost_Purchase]  AS  t 
+ 
 
-        OUTPUT  $action  
+        USING  #SourceData  AS  s 
+ 
 
-        INTO  @MergeSummary;  
+        ON  t.COMCU_CostCenter  =  s.COMCU_CostCenter
 
-  
 
-        --  SET  THE  VARIABLE  WITH  THE  ROW  COUNT  OF  THE  INSERT  AND  UPDATE  
+                AND t.COITM_IdentifierShortItem  =  s.COITM_IdentifierShortItem
 
-        SELECT  @RowCountAffectedInsert  =  COUNT(*)  
 
-        FROM  @MergeSummary  
+                AND t.COLEDG_LedgType  =  s.COLEDG_LedgType
 
-        WHERE  ActionTaken  =  'INSERT'  
 
-        SELECT  @RowCountAffectedUpdate  =  COUNT(*)  
+                AND t.is_current  =  1 
+ 
 
-        FROM  @MergeSummary  
+        WHEN  MATCHED  AND  t.COUNCS_AmountUnitCost  <>  s.COUNCS_AmountUnitCost  THEN 
+ 
 
-        WHERE  ActionTaken  =  'UPDATE'  
+                UPDATE  SET  t.[valid_to]  =  GETDATE()-1 
+ 
 
-  
+                                   ,  t.is_current  =  0 
+ 
 
-        --  UPDATE  THE  AUDIT  TABLE  WITH  THE  ROWCOUNTAFFECTED  
+        WHEN  NOT  MATCHED  BY  TARGET  THEN 
+ 
 
-        EXEC  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  @IdentityAuditIdInsert  
+                INSERT 
+ 
 
-                                                                                                                                 ,  @Database  
+                ( 
+ 
 
-                                                                                                                                 ,  'F_ProductCost_Purchase'  
+                        [DRDL02_Description01002] 
+ 
 
-                                                                                                                                 ,  'I'  
+                     ,  [DRDL01_Description001] 
+ 
 
-                                                                                                                                 ,  'S'  
+                     ,  [COMCU_CostCenter] 
+ 
 
-                                                                                                                                 ,  @RowCountAffectedInsert  
+                     ,  [COLOCN_Location] 
+ 
 
-       ,  0  
+                     ,  [COITM_IdentifierShortItem] 
+ 
 
-                                                                                                                                 ,  0  
+                     ,  [CCCRCD] 
+ 
 
-                                                                                                                                 ,  'Y'  
+                     ,  [COLEDG_LedgType] 
+ 
 
-        EXEC  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  @IdentityAuditIdUpdate  
+                     ,  [COUNCS_AmountUnitCost] 
+ 
 
-                                                                                                                                 ,  @Database  
+                     ,  [CCCO] 
+ 
 
-                                                                                                                                 ,  'F_ProductCost_Purchase'  
+                     ,  [Cost_Type] 
+ 
 
-                                                                                                                                 ,  'U'  
+                     ,  [Date] 
+ 
 
-                                                                                                                                 ,  'S'  
+                     ,  [valid_from] 
+ 
 
-                                                                                                                                 ,  @RowCountAffectedUpdate  
+                     ,  [valid_to] 
+ 
 
-                                                                                                                                 ,  0  
+                     ,  [is_current] 
+ 
 
-                                                                                                                                 ,  0  
+                ) 
+ 
 
-                                                                                                                                 ,  'Y'  
+                VALUES 
+ 
 
-  
+                (s.[DRDL02_Description01002] 
+ 
 
-/*****************************************************************************************************************************************************************************  
+               ,  s.[DRDL01_Description001] 
+ 
 
-								REQUETE  PRINCIPALE  (MERGE)  
+               ,  s.[COMCU_CostCenter] 
+ 
 
-										FIN  
+               ,  s.[COLOCN_Location] 
+ 
 
-******************************************************************************************************************************************************************************/  
+               ,  s.[COITM_IdentifierShortItem] 
+ 
+
+               ,  s.[CCCRCD] 
+ 
+
+               ,  s.[COLEDG_LedgType] 
+ 
+
+               ,  s.[COUNCS_AmountUnitCost] 
+ 
+
+               ,  s.[CCCO] 
+ 
+
+               ,  s.[Cost_Type] 
+ 
+
+               ,  DATEADD(day ,  DATEDIFF(day ,  0 ,  GETDATE()) ,  0) 
+ 
+
+               ,  GETDATE() 
+ 
+
+               ,  '9999-12-31' 
+ 
+
+               ,  1 
+ 
+
+                ) 
+ 
+
+        OUTPUT  $action 
+ 
+
+        INTO  @MergeSummary;
+
+
+
+
+
+        --  SET  THE  VARIABLE  WITH  THE  ROW  COUNT  OF  THE  INSERT  AND  UPDATE 
+
+
+        SELECT @RowCountAffectedInsert  =  COUNT(*)
+
+
+        FROM @MergeSummary
+
+
+        WHERE  ActionTaken  =  'INSERT'
+
+
+        SELECT @RowCountAffectedUpdate  =  COUNT(*)
+
+
+        FROM @MergeSummary
+
+
+        WHERE  ActionTaken  =  'UPDATE'
+
+
+
+
+
+        --  UPDATE  THE  AUDIT  TABLE  WITH  THE  ROWCOUNTAFFECTED 
+
+
+        EXEC  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  @IdentityAuditIdInsert 
+ 
+
+                                                                                                                                 ,  @Database 
+ 
+
+                                                                                                                                 ,  'F_ProductCost_Purchase' 
+ 
+
+                                                                                                                                 ,  'I' 
+ 
+
+                                                                                                                                 ,  'S' 
+ 
+
+                                                                                                                                 ,  @RowCountAffectedInsert 
+ 
+
+       ,  0 
+ 
+
+                                                                                                                                 ,  0 
+ 
+
+                                                                                                                                 ,  'Y'
+
+
+        EXEC  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  @IdentityAuditIdUpdate 
+ 
+
+                                                                                                                                 ,  @Database 
+ 
+
+                                                                                                                                 ,  'F_ProductCost_Purchase' 
+ 
+
+                                                                                                                                 ,  'U' 
+ 
+
+                                                                                                                                 ,  'S' 
+ 
+
+                                                                                                                                 ,  @RowCountAffectedUpdate 
+ 
+
+                                                                                                                                 ,  0 
+ 
+
+                                                                                                                                 ,  0 
+ 
+
+                                                                                                                                 ,  'Y'
+
+
+
+
+
+/***************************************************************************************************************************************************************************** 
+ 
+
+								REQUETE  PRINCIPALE  (MERGE) 
+ 
+
+										FIN 
+ 
+
+******************************************************************************************************************************************************************************/
+
 
 END

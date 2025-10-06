@@ -1,8 +1,51 @@
-SELECT TOP 1000
-    *
+SELECT OrderNumber, CompanyCode, LineNumber ,COUNT(DISTINCT OriginalAmount), COUNT(DISTINCT QuantityOpen), COUNT(DISTINCT QuantityOrder), COUNT(DISTINCT QuantityReceived)
 
 FROM
     RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+    GROUP BY OrderNumber, CompanyCode, LineNumber
+    HAVING COUNT(DISTINCT OriginalAmount)>1
+    ORDER BY OrderNumber, LineNumber
+
+
+SELECT OrderNumber, CompanyCode, LineNumber ,  COUNT(DISTINCT QuantityOrder), COUNT(DISTINCT LineTypeCode)
+
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+    GROUP BY OrderNumber, CompanyCode, LineNumber
+    HAVING COUNT(DISTINCT LineTypeCode)>1
+    ORDER BY OrderNumber, LineNumber
+
+
+select OrderNumber, CompanyCode, LineNumber, ReceptionDate, OriginalAmount_cad,OriginalAmount, QuantityOpen,
+CancelDate,   
+    ROW_NUMBER() OVER (
+        PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber, CancelDate
+        ORDER BY ReceptionDate DESC
+    )
+ AS LastReception
+
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine
+where OrderNumber=138319 
+--where ReceptionDate is null
+order by LineNumber, OrderNumber
+
+
+
+
+SELECT D.FiscalYear, sum( P.OriginalAmount_cad)
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.F_PurchaseOrderLine P
+    JOIN RDL00001_EnterpriseDataWarehouse.dbo.D_P_Dates D
+    ON P.OrderDate=D.Id
+    group by D.FiscalYear
+
+GO
+SELECT min (date)
+
+FROM
+    RDL00001_EnterpriseDataWarehouse.dbo.D_P_Dates
+
 go
     SELECT
     TABLE_SCHEMA + '.' + TABLE_NAME AS TABLE_FULL_NAME

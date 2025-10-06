@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from utils.connpd import execute_query
 from utils.connpp import execute_queryPP
 from openpyxl.styles import Alignment
@@ -22,7 +23,7 @@ select_columns = """
 	"""
 #####################
 ###################
-## Connect to the Data Lake and extract the catalog of JDE_BI_OPS
+# Connect to the Data Lake and extract the catalog of JDE_BI_OPS
 DL_biops_DataLake = execute_query(f"""
 SELECT 
 	{select_columns}
@@ -70,8 +71,10 @@ WHERE
     AND TABLE_NAME NOT LIKE '%bkp%'
     ORDER BY TABLE_NAME,COLUMN_NAME
     """)
-###########################GET THE EXCEL REPORT AND CONFIGURED IT########################
-Excel_file = "catalog.xlsx"
+########################### GET THE EXCEL REPORT AND CONFIGURED IT########################
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+Excel_file = os.path.join(script_dir, "catalog.xlsx")
 # create / replace the file########
 # with pd.ExcelWriter(
 #     Excel_file, engine="openpyxl", mode="w"  # Use "w" to overwrite
@@ -111,7 +114,8 @@ titles = {
 }
 
 # Set horizontal alignment for cells (currently set to left)
-alignment = Alignment(horizontal="left")  # Options include "left", "center", "right"
+# Options include "left", "center", "right"
+alignment = Alignment(horizontal="left")
 
 # Loop over each sheet and title
 for sheet_name, title in titles.items():
@@ -127,7 +131,8 @@ for sheet_name, title in titles.items():
             try:
                 cell_value = str(cell.value)
                 if cell_value:
-                    max_length = max(max_length, len(cell_value))  # Track max length
+                    max_length = max(max_length, len(
+                        cell_value))  # Track max length
             except:
                 pass  # Safely ignore errors while accessing cell values
 

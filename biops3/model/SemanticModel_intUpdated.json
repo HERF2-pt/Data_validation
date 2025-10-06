@@ -1536,7 +1536,6 @@
           {
             "name": "Branch",
             "dataType": "string",
-            "isHidden": true,
             "sourceColumn": "Branch",
             "sourceProviderType": "WChar"
           },
@@ -2242,15 +2241,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -2320,29 +2319,29 @@
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName_EU",
@@ -2412,15 +2411,15 @@
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -2450,6 +2449,28 @@
             ]
           }
         ],
+        "hierarchies": [
+          {
+            "name": "YMW",
+            "levels": [
+              {
+                "name": "Year",
+                "ordinal": 0,
+                "column": "Year"
+              },
+              {
+                "name": "Month",
+                "ordinal": 1,
+                "column": "Month"
+              },
+              {
+                "name": "WeekOfYear",
+                "ordinal": 2,
+                "column": "WeekOfYear"
+              }
+            ]
+          }
+        ],
         "annotations": [
           {
             "name": "_TM_ExtProp_QueryDefinition",
@@ -2475,28 +2496,6 @@
               "FROM D_P_Dates",
               "where Date <=GETDATE()",
               "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
-        "hierarchies": [
-          {
-            "name": "YMW",
-            "levels": [
-              {
-                "name": "Year",
-                "ordinal": 0,
-                "column": "Year"
-              },
-              {
-                "name": "Month",
-                "ordinal": 1,
-                "column": "Month"
-              },
-              {
-                "name": "WeekOfYear",
-                "ordinal": 2,
-                "column": "WeekOfYear"
-              }
             ]
           }
         ]
@@ -2891,129 +2890,6 @@
             "displayFolder": "Count"
           },
           {
-            "name": "Active_Distinct_PO_Count",
-            "expression": [
-              "",
-              "VAR Orders =",
-              "    SUMMARIZE(",
-              "        F_PurchaseOrderLine,",
-              "        F_PurchaseOrderLine[OrderNumber]",
-              "    )",
-              "VAR OrdersWithStatus =",
-              "    ADDCOLUMNS(",
-              "        Orders,",
-              "        \"__po_status\",",
-              "            VAR total = CALCULATE([Total_Line_Count])",
-              "            VAR canc  = CALCULATE([Cancelled_Line_Count])",
-              "            RETURN IF(total > 0 && total = canc, \"Cancelled\", \"Active\")",
-              "    )",
-              "RETURN",
-              "COUNTROWS(",
-              "    FILTER(",
-              "        OrdersWithStatus,",
-              "        [__po_status] = \"Active\"",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Count"
-          },
-          {
-            "name": "Total_CountDistinct_PO",
-            "expression": [
-              "",
-              "    [Active_Distinct_PO_Count] + [Cancelled_Distinct_PO_Count]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Cancelled_Original_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM('F_PurchaseOrderLine'[OriginalAmount]),",
-              "    FILTER(",
-              "        'D_PO_CancelDate',",
-              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Total_Original_Amount_PO",
-            "expression": [
-              "",
-              "    [Cancelled_Original_Amount_PO] + [Active_Original_Amount_PO]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Active_Original_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[OriginalAmount]), ",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Total_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "    [Cancelled_Foreign_Amount_PO] + [Active_Foreign_Amount_PO]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Cancelled_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
-              "    FILTER(",
-              "        'D_PO_CancelDate',",
-              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Active_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]), ",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
             "name": "%_Cancelled_Lines",
             "expression": [
               "",
@@ -3022,43 +2898,6 @@
             ],
             "formatString": "0.00%;-0.00%;0.00%",
             "displayFolder": "KPI"
-          },
-          {
-            "name": "%_Cancelled_Original_Amount_PO",
-            "expression": [
-              "",
-              "    DIVIDE([Cancelled_Original_Amount_PO], [Total_Original_Amount_PO], 0)",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "KPI"
-          },
-          {
-            "name": "%_Cancelled_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "    DIVIDE([Cancelled_Foreign_Amount_PO], [Total_Foreign_Amount_PO], 0)",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "isHidden": true,
-            "displayFolder": "KPI"
-          },
-          {
-            "name": "Not_Received_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[ReceptionDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
           },
           {
             "name": "Not_Received_Original_Amount_PO",
@@ -3092,20 +2931,6 @@
             "displayFolder": "Count"
           },
           {
-            "name": "Display_cie",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    SELECTEDVALUE(D_Company[Cie]),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Display"
-          },
-          {
             "name": "Display_cie+",
             "expression": [
               "",
@@ -3119,38 +2944,6 @@
               "    BLANK()",
               ")"
             ],
-            "displayFolder": "Display"
-          },
-          {
-            "name": "Display_currency_Company+",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    CONCATENATEX(",
-              "        VALUES(D_Company[CurrencyCode]),",
-              "        D_Company[CurrencyCode],",
-              "        \"\", \"\"",
-              "    ),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Display"
-          },
-          {
-            "name": "Display_currency_Company",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    SELECTEDVALUE(D_Company[CurrencyCode]),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
             "displayFolder": "Display"
           },
           {
@@ -3174,31 +2967,6 @@
               "RETURN",
               "    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )"
             ],
-            "displayFolder": "Count"
-          },
-          {
-            "name": "Parcial_PO_Recieved_Count",
-            "expression": [
-              "",
-              "VAR OrdersWithAnyReceipt =",
-              "    DISTINCT (",
-              "        SELECTCOLUMNS (",
-              "            FILTER ( F_PurchaseOrderLine, NOT ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
-              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
-              "        )",
-              "    )",
-              "VAR OrdersWithAnyMissingReceipt =",
-              "    DISTINCT (",
-              "        SELECTCOLUMNS (",
-              "            FILTER ( F_PurchaseOrderLine, ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
-              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
-              "        )",
-              "    )",
-              "RETURN",
-              "    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )",
-              ""
-            ],
-            "isHidden": true,
             "displayFolder": "Count"
           },
           {
@@ -3236,8 +3004,14 @@
               "RETURN OriginalAmountCAD * ExchangeRate",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "Total"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Total",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "Cancelled_Amount_PO",
@@ -3273,15 +3047,14 @@
               "RETURN OriginalAmountCAD * ExchangeRate",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Active_Amount_PO",
-            "expression": " [Total_Amount_PO]-[Cancelled_Amount_PO]",
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "Sum"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Sum",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "%_Cancelled_Amount_PO",
@@ -3323,8 +3096,14 @@
               "RETURN OriginalAmountCAD * ExchangeRate",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "Sum"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Sum",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "Total_Amount_PO_Freight",
@@ -3384,8 +3163,14 @@
               "",
               "RETURN LineTypeF + SecondItem"
             ],
-            "formatString": "0.00",
-            "displayFolder": "Total"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Total",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "Total_Amount_PO_Tariffs",
@@ -3422,8 +3207,14 @@
               "            )",
               ""
             ],
-            "formatString": "0.00",
-            "displayFolder": "Total"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Total",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "Total_Amount_PO_Rush",
@@ -3458,8 +3249,14 @@
               "",
               ""
             ],
-            "formatString": "0.00",
-            "displayFolder": "Total"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "Total",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "Is_Line_Cancelled",
@@ -4049,8 +3846,14 @@
               ")",
               ""
             ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "YTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "YTD_Cancelled_Amount_PO",
@@ -4066,8 +3869,14 @@
               ")",
               ""
             ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "YTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "YTD_Active_Line_Count",
@@ -4166,8 +3975,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "YTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "YTD_Total_Amount_PO_Tariffs",
@@ -4182,8 +3997,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "YTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "YTD_Total_Amount_PO_Rush",
@@ -4198,8 +4019,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "YTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "YTD_Average_Leadtime_ReceiptDate",
@@ -4310,8 +4137,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "LYTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "LYTD_Cancelled_Amount_PO",
@@ -4326,8 +4159,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "LYTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "LYTD_Active_Line_Count",
@@ -4423,8 +4262,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "LYTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "LYTD_Total_Amount_PO_Tariffs",
@@ -4439,8 +4284,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "LYTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "LYTD_Total_Amount_PO_Rush",
@@ -4455,8 +4306,14 @@
               "    )",
               ")"
             ],
-            "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "displayFolder": "LYTD",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
           },
           {
             "name": "LYTD_Average_Leadtime_ReceiptDate",
@@ -4701,38 +4558,6 @@
             "displayFolder": "YTD"
           },
           {
-            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],",
-              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "MTD"
-          },
-          {
-            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate],",
-              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "MTD"
-          },
-          {
             "name": "AverageRequest_versus_AveragePromisedDelivery",
             "expression": [
               "",
@@ -4766,46 +4591,6 @@
             ],
             "formatString": "0.00%;-0.00%;0.00%",
             "displayFolder": "LeadTime"
-          },
-          {
-            "name": "LYTD_AverageRequest_versus_AveragePromisedDelivery",
-            "expression": [
-              "",
-              "AVERAGEX(",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
-              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate])",
-              "    ),",
-              "    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LYTD_AverageRequest_versus_AverageSupplierFirstPromised",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    AVERAGEX(",
-              "        FILTER(",
-              "            F_PurchaseOrderLine,",
-              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
-              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate])",
-              "        ),",
-              "        F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate]",
-              "    ),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
-              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "LYTD"
           },
           {
             "name": "Ratio_Early_ReceiptDate_SupplierFirstPromisedDate",
@@ -5030,6 +4815,322 @@
               ")"
             ],
             "formatString": "0.00",
+            "displayFolder": "LYTD"
+          },
+          {
+            "name": "Active_Distinct_PO_Count",
+            "expression": [
+              "",
+              "VAR Orders =",
+              "    SUMMARIZE(",
+              "        F_PurchaseOrderLine,",
+              "        F_PurchaseOrderLine[OrderNumber]",
+              "    )",
+              "VAR OrdersWithStatus =",
+              "    ADDCOLUMNS(",
+              "        Orders,",
+              "        \"__po_status\",",
+              "            VAR total = CALCULATE([Total_Line_Count])",
+              "            VAR canc  = CALCULATE([Cancelled_Line_Count])",
+              "            RETURN IF(total > 0 && total = canc, \"Cancelled\", \"Active\")",
+              "    )",
+              "RETURN",
+              "COUNTROWS(",
+              "    FILTER(",
+              "        OrdersWithStatus,",
+              "        [__po_status] = \"Active\"",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Count"
+          },
+          {
+            "name": "Total_CountDistinct_PO",
+            "expression": [
+              "",
+              "    [Active_Distinct_PO_Count] + [Cancelled_Distinct_PO_Count]",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Total"
+          },
+          {
+            "name": "Cancelled_Original_Amount_PO",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('F_PurchaseOrderLine'[OriginalAmount]),",
+              "    FILTER(",
+              "        'D_PO_CancelDate',",
+              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Sum"
+          },
+          {
+            "name": "Total_Original_Amount_PO",
+            "expression": [
+              "",
+              "    [Cancelled_Original_Amount_PO] + [Active_Original_Amount_PO]",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Total"
+          },
+          {
+            "name": "Active_Original_Amount_PO",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM(F_PurchaseOrderLine[OriginalAmount]), ",
+              "    FILTER(",
+              "        F_PurchaseOrderLine,",
+              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Sum"
+          },
+          {
+            "name": "Total_Foreign_Amount_PO",
+            "expression": [
+              "",
+              "    [Cancelled_Foreign_Amount_PO] + [Active_Foreign_Amount_PO]",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Total"
+          },
+          {
+            "name": "Cancelled_Foreign_Amount_PO",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
+              "    FILTER(",
+              "        'D_PO_CancelDate',",
+              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Sum"
+          },
+          {
+            "name": "Active_Foreign_Amount_PO",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM(F_PurchaseOrderLine[ForeignAmount]), ",
+              "    FILTER(",
+              "        F_PurchaseOrderLine,",
+              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Sum"
+          },
+          {
+            "name": "%_Cancelled_Original_Amount_PO",
+            "expression": [
+              "",
+              "    DIVIDE([Cancelled_Original_Amount_PO], [Total_Original_Amount_PO], 0)",
+              ""
+            ],
+            "formatString": "0.00%;-0.00%;0.00%",
+            "displayFolder": "KPI"
+          },
+          {
+            "name": "%_Cancelled_Foreign_Amount_PO",
+            "expression": [
+              "",
+              "    DIVIDE([Cancelled_Foreign_Amount_PO], [Total_Foreign_Amount_PO], 0)",
+              ""
+            ],
+            "formatString": "0.00%;-0.00%;0.00%",
+            "isHidden": true,
+            "displayFolder": "KPI"
+          },
+          {
+            "name": "Not_Received_Foreign_Amount_PO",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
+              "    FILTER(",
+              "        F_PurchaseOrderLine,",
+              "        ISBLANK(F_PurchaseOrderLine[ReceptionDate])",
+              "    )",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Sum"
+          },
+          {
+            "name": "Display_cie",
+            "expression": [
+              "",
+              "IF(",
+              "    ISFILTERED(D_Company[Cie]),",
+              "    SELECTEDVALUE(D_Company[Cie]),",
+              "    BLANK()",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Display"
+          },
+          {
+            "name": "Display_currency_Company+",
+            "expression": [
+              "",
+              "IF(",
+              "    ISFILTERED(D_Company[Cie]),",
+              "    CONCATENATEX(",
+              "        VALUES(D_Company[CurrencyCode]),",
+              "        D_Company[CurrencyCode],",
+              "        \"\", \"\"",
+              "    ),",
+              "    BLANK()",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Display"
+          },
+          {
+            "name": "Display_currency_Company",
+            "expression": [
+              "",
+              "IF(",
+              "    ISFILTERED(D_Company[Cie]),",
+              "    SELECTEDVALUE(D_Company[CurrencyCode]),",
+              "    BLANK()",
+              ")",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Display"
+          },
+          {
+            "name": "Parcial_PO_Recieved_Count",
+            "expression": [
+              "",
+              "VAR OrdersWithAnyReceipt =",
+              "    DISTINCT (",
+              "        SELECTCOLUMNS (",
+              "            FILTER ( F_PurchaseOrderLine, NOT ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
+              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
+              "        )",
+              "    )",
+              "VAR OrdersWithAnyMissingReceipt =",
+              "    DISTINCT (",
+              "        SELECTCOLUMNS (",
+              "            FILTER ( F_PurchaseOrderLine, ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
+              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
+              "        )",
+              "    )",
+              "RETURN",
+              "    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )",
+              ""
+            ],
+            "isHidden": true,
+            "displayFolder": "Count"
+          },
+          {
+            "name": "Active_Amount_PO",
+            "expression": " [Total_Amount_PO]-[Cancelled_Amount_PO]",
+            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
+            "isHidden": true,
+            "displayFolder": "Sum",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
+              }
+            ]
+          },
+          {
+            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],",
+              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
+              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
+              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
+              ")",
+              ""
+            ],
+            "formatString": "0.00",
+            "isHidden": true,
+            "displayFolder": "MTD"
+          },
+          {
+            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Ratio_Late_ReceiptDate_RequestDate],",
+              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
+              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
+              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
+              ")",
+              ""
+            ],
+            "formatString": "0.00",
+            "isHidden": true,
+            "displayFolder": "MTD"
+          },
+          {
+            "name": "LYTD_AverageRequest_versus_AveragePromisedDelivery",
+            "expression": [
+              "",
+              "AVERAGEX(",
+              "    FILTER(",
+              "        F_PurchaseOrderLine,",
+              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
+              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate])",
+              "    ),",
+              "    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]",
+              ")",
+              ""
+            ],
+            "formatString": "0.00",
+            "isHidden": true,
+            "displayFolder": "LYTD"
+          },
+          {
+            "name": "LYTD_AverageRequest_versus_AverageSupplierFirstPromised",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    AVERAGEX(",
+              "        FILTER(",
+              "            F_PurchaseOrderLine,",
+              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
+              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate])",
+              "        ),",
+              "        F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate]",
+              "    ),",
+              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
+              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
+              ")",
+              ""
+            ],
+            "formatString": "0.00",
+            "isHidden": true,
             "displayFolder": "LYTD"
           }
         ]
@@ -5415,8 +5516,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -5558,15 +5659,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -5584,43 +5685,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -5684,8 +5785,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -5717,26 +5818,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "d_date_GL"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -5756,6 +5837,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "d_date_GL"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -5781,8 +5882,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -5924,15 +6025,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -5950,43 +6051,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -6050,8 +6151,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -6083,26 +6184,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "D_date_Receipt"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -6122,6 +6203,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_date_Receipt"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -6147,8 +6248,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -6290,15 +6391,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -6316,43 +6417,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -6416,8 +6517,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -6449,26 +6550,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "D_date_Request"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -6488,6 +6569,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_date_Request"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -6513,8 +6614,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -6656,15 +6757,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -6682,43 +6783,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -6782,8 +6883,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -6815,26 +6916,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "D_date_Promised_Delivery"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -6854,6 +6935,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_date_Promised_Delivery"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -6879,8 +6980,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -7022,15 +7123,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -7048,43 +7149,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -7148,8 +7249,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -7181,26 +7282,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "D_date_Original_Promised"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -7220,6 +7301,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_date_Original_Promised"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -7395,8 +7496,8 @@
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -7421,36 +7522,36 @@
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -7548,26 +7649,6 @@
             ]
           }
         ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT * FROM D_P_Dates",
-              "ORDER BY    Id"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "D_date_Cancel"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
-              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
         "hierarchies": [
           {
             "name": "YMW",
@@ -7587,6 +7668,26 @@
                 "ordinal": 2,
                 "column": "WeekOfYear"
               }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT * FROM D_P_Dates",
+              "ORDER BY    Id"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_date_Cancel"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
+              "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -8140,8 +8241,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -8223,15 +8324,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -8249,43 +8350,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -8324,8 +8425,8 @@
             "name": "MONTH",
             "dataType": "int64",
             "sourceColumn": "MONTH",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "MonthName",
@@ -8337,8 +8438,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -8370,6 +8471,28 @@
             ]
           }
         ],
+        "hierarchies": [
+          {
+            "name": "YMW",
+            "levels": [
+              {
+                "name": "Year",
+                "ordinal": 0,
+                "column": "Year"
+              },
+              {
+                "name": "Month",
+                "ordinal": 1,
+                "column": "MONTH"
+              },
+              {
+                "name": "WeekOfYear",
+                "ordinal": 2,
+                "column": "WeekOfYear"
+              }
+            ]
+          }
+        ],
         "annotations": [
           {
             "name": "_TM_ExtProp_QueryDefinition",
@@ -8389,28 +8512,6 @@
               "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
-        ],
-        "hierarchies": [
-          {
-            "name": "YMW",
-            "levels": [
-              {
-                "name": "Year",
-                "ordinal": 0,
-                "column": "Year"
-              },
-              {
-                "name": "Month",
-                "ordinal": 1,
-                "column": "Month"
-              },
-              {
-                "name": "WeekOfYear",
-                "ordinal": 2,
-                "column": "WeekOfYear"
-              }
-            ]
-          }
         ]
       },
       {
@@ -8427,8 +8528,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -8510,15 +8611,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -8536,43 +8637,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -8611,8 +8712,8 @@
             "name": "MONTH",
             "dataType": "int64",
             "sourceColumn": "MONTH",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "MonthName",
@@ -8624,8 +8725,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -8657,6 +8758,28 @@
             ]
           }
         ],
+        "hierarchies": [
+          {
+            "name": "YMW",
+            "levels": [
+              {
+                "name": "Year",
+                "ordinal": 0,
+                "column": "Year"
+              },
+              {
+                "name": "Month",
+                "ordinal": 1,
+                "column": "MONTH"
+              },
+              {
+                "name": "WeekOfYear",
+                "ordinal": 2,
+                "column": "WeekOfYear"
+              }
+            ]
+          }
+        ],
         "annotations": [
           {
             "name": "_TM_ExtProp_QueryDefinition",
@@ -8676,28 +8799,6 @@
               "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
-        ],
-        "hierarchies": [
-          {
-            "name": "YMW",
-            "levels": [
-              {
-                "name": "Year",
-                "ordinal": 0,
-                "column": "Year"
-              },
-              {
-                "name": "Month",
-                "ordinal": 1,
-                "column": "Month"
-              },
-              {
-                "name": "WeekOfYear",
-                "ordinal": 2,
-                "column": "WeekOfYear"
-              }
-            ]
-          }
         ]
       },
       {
@@ -8714,8 +8815,8 @@
             "name": "DayOfMonth",
             "dataType": "int64",
             "sourceColumn": "DayOfMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "DayOfWeekName",
@@ -8797,15 +8898,15 @@
             "name": "FiscalMonth",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonth_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalMonth_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalMonthName",
@@ -8823,43 +8924,43 @@
             "name": "FiscalQuarter",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalQuarter_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalQuarter_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalWeekOfYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalWeekOfYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear",
             "dataType": "int64",
             "sourceColumn": "FiscalYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYear_EU",
             "dataType": "int64",
             "sourceColumn": "FiscalYear_EU",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "FiscalYearName",
@@ -8898,8 +8999,8 @@
             "name": "MONTH",
             "dataType": "int64",
             "sourceColumn": "MONTH",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "MonthName",
@@ -8911,8 +9012,8 @@
             "name": "WeekOfYear",
             "dataType": "int64",
             "sourceColumn": "WeekOfYear",
-            "sourceProviderType": "Integer",
-            "formatString": "0"
+            "formatString": "0",
+            "sourceProviderType": "Integer"
           },
           {
             "name": "Year",
@@ -8944,6 +9045,28 @@
             ]
           }
         ],
+        "hierarchies": [
+          {
+            "name": "YMW",
+            "levels": [
+              {
+                "name": "Year",
+                "ordinal": 0,
+                "column": "Year"
+              },
+              {
+                "name": "Month",
+                "ordinal": 1,
+                "column": "MONTH"
+              },
+              {
+                "name": "WeekOfYear",
+                "ordinal": 2,
+                "column": "WeekOfYear"
+              }
+            ]
+          }
+        ],
         "annotations": [
           {
             "name": "_TM_ExtProp_QueryDefinition",
@@ -8961,28 +9084,6 @@
             "value": [
               "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT * FROM D_P_Dates",
               "ORDER BY    Id</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ],
-        "hierarchies": [
-          {
-            "name": "YMW",
-            "levels": [
-              {
-                "name": "Year",
-                "ordinal": 0,
-                "column": "Year"
-              },
-              {
-                "name": "Month",
-                "ordinal": 1,
-                "column": "Month"
-              },
-              {
-                "name": "WeekOfYear",
-                "ordinal": 2,
-                "column": "WeekOfYear"
-              }
             ]
           }
         ]

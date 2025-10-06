@@ -3,6 +3,7 @@ import pandas as pd
 import openpyxl
 from openpyxl import load_workbook
 from datetime import datetime
+import os
 
 
 serverName = 'NADWOLAPPP1A'
@@ -40,4 +41,7 @@ df_allMeasures_combined['QueryDate'] = datetime.today().date()
 df_allMeasures_combined = df_allMeasures_combined.dropna(axis=1, how='all')
 # df_allMeasures_combined['EXPRESSION'] = df_allMeasures_combined['EXPRESSION'].str.replace(',', ',\n')
 # save it
-df_allMeasures_combined.to_excel(f"AllMeasures{serverName}.xlsx", index=False)
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+Excel_file = os.path.join(script_dir, f"AllMeasures_{serverName}.xlsx")
+df_allMeasures_combined.to_excel(f"{Excel_file}", index=False)

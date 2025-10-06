@@ -3,7 +3,7 @@ import pandas as pd
 import openpyxl
 from openpyxl import load_workbook
 from datetime import datetime
-
+import os
 
 serverName = 'NADWOLAPPP1A'
 cube: str = 'RDL00001_Procurement'
@@ -46,4 +46,6 @@ df_allMeasures_combined['QueryDate'] = datetime.today().timestamp()
 df_allMeasures_combined = df_allMeasures_combined.dropna(axis=1, how='all')
 
 # save it
+
+
 df_allMeasures_combined.to_excel(f"MeasuresCalculations{serverName}.xlsx", index=False)

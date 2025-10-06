@@ -23,6 +23,7 @@
           {
             "name": "ItemBranchkey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "ItemBranchkey",
             "sourceProviderType": "Integer"
           },
@@ -247,6 +248,7 @@
           {
             "name": "ItemKey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "ItemKey",
             "sourceProviderType": "Integer"
           },
@@ -1519,6 +1521,7 @@
           {
             "name": "ItemBranchkey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "ItemBranchkey",
             "sourceProviderType": "Integer"
           },
@@ -1602,8 +1605,9 @@
           },
           {
             "name": "LineNumber",
-            "dataType": "int64",
+            "dataType": "double",
             "sourceColumn": "LineNumber",
+            "formatString": "0.00",
             "sourceProviderType": "Numeric"
           },
           {
@@ -1895,11 +1899,6 @@
             "sourceColumn": "Currency_cad"
           },
           {
-            "name": "OriginalAmount_cad",
-            "dataType": "double",
-            "sourceColumn": "OriginalAmount_cad"
-          },
-          {
             "name": "PO_Type",
             "dataType": "string",
             "sourceColumn": "PO_Type"
@@ -1973,6 +1972,7 @@
           {
             "name": "BranchKey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "BranchKey"
           },
           {
@@ -1989,11 +1989,6 @@
             "name": "Leadtime_SupplierFirstPromisedDate",
             "dataType": "double",
             "sourceColumn": "Leadtime_SupplierFirstPromisedDate"
-          },
-          {
-            "name": "CostCenterKey",
-            "dataType": "int64",
-            "sourceColumn": "CostCenterKey"
           },
           {
             "name": "Supplierfirstpromiseddate",
@@ -2029,6 +2024,16 @@
               "    F_PurchaseOrderLine[Leadtime_ReceiptDate] - F_PurchaseOrderLine[Leadtime_OriginalPromisedDate]",
               ")"
             ]
+          },
+          {
+            "name": "OriginalAmount_cad",
+            "dataType": "double",
+            "sourceColumn": "OriginalAmount_cad"
+          },
+          {
+            "name": "OriginalAmount_cad_V0",
+            "dataType": "double",
+            "sourceColumn": "OriginalAmount_cad_V0"
           }
         ],
         "partitions": [
@@ -2038,17 +2043,89 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT *",
-                ", [CostCenterKey] as BranchKey",
+                "SELECT [ItemKey]",
+                "      ,[ItemBranchkey]",
+                "      ,[AccountNumber]",
+                "      ,[AmountOpen]",
+                "      ,[Branch]",
+                "      ,[BuyerNumber]",
+                "      ,[CarrierCode]",
+                "      ,[CatalogName]",
+                "      ,[CompanyCode]",
+                "      ,[CostCenter]",
+                "      ,[DescriptionLine1]",
+                "      ,[DescriptionLine2]",
+                "      ,[ExchangeRate]",
+                "      ,[ForeignAmount]",
+                "      ,[LastStatusCode]",
+                "      ,[LineNumber]",
+                "      ,[LineTypeCode]",
+                "      ,[NextStatusCode]",
+                "      ,[OrderNumber]",
+                "      ,[OrderType]",
+                "      ,[OriginalAmount]",
+                "      ,[CancelDate]",
+                "      ,[GLDate]",
+                "      ,[OrderDate]",
+                "      ,[OriginalPromisDate]",
+                "      ,[PromiseDate]",
+                "      ,[ReceptionDate]",
+                "      ,[RequestedDate]",
+                "      ,[ProjectNumber]",
+                "      ,[PurchaseOrderCode01]",
+                "      ,[QtyOpenQtyReceived]",
+                "      ,[QuantityOpen]",
+                "      ,[QuantityOrder]",
+                "      ,[QuantityReceived]",
+                "      ,[RelatedCO]",
+                "      ,[RelatedLine]",
+                "      ,[RelatedNumber]",
+                "      ,[RelatedOrderType]",
+                "      ,[Subledger]",
+                "      ,[SubledgerType]",
+                "      ,[SupplierNumber]",
+                "      ,[TransactionOriginator]",
+                "      ,[UnitCostPurchasing]",
+                "      ,[UnitPrice]",
+                "      ,[UOM]",
+                "      ,[OrderCO]",
+                "      ,[Currency]",
+                "      ,[Shipto]",
+                "      ,[StandardCost]",
+                "      ,[LastInCost]",
+                "      ,[LastInPrimaryVendorCost]",
+                "      ,[CatalogPrice]",
                 "      ",
-                "",
+                "      ,[Currency_cad]",
+                "      ",
+                "      ,[CatalogPrice_EffectiveDate]",
+                "      ,[CatalogPrice_ExpiredDate]",
+                "      ,[PO_Type]",
+                "      ,[Leadtime_ReceiptDate]",
+                "      ,[Leadtime_OriginalPromisedDate]",
+                "      ,[Leadtime_PromisedDeliveryDate]",
+                "      ,[Leadtime_RequestDate]",
+                "      ,[Supplierfirstpromiseddate]",
+                "      ,[Leadtime_SupplierFirstPromisedDate]",
+                "      ,[RoutingApproval]",
+                "      ,[BuyerAcronym]",
+                "      ,[Is_Preferred_Supplier]",
+                "    ,OriginalAmount_cad AS OriginalAmount_cad_V0",
+                " ,[CostCenterKey] AS BranchKey",
+                "      ",
+                " ,CASE WHEN(ROW_NUMBER() OVER (",
+                "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
+                "    ORDER BY ReceptionDate DESC))=1 ",
+                "    THEN OriginalAmount_cad*1",
+                "    ELSE 0 ",
+                "    END AS OriginalAmount_cad",
                 "",
                 ",ROW_NUMBER() OVER (",
                 "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
                 "    ORDER BY ReceptionDate DESC",
                 ") AS LastReception",
                 "",
-                "  FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]"
+                "FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]"
               ],
               "dataSource": "RDL00001_EnterpriseDataWarehouse"
             },
@@ -2056,17 +2133,89 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT *",
-                  ", [CostCenterKey] as BranchKey",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [ItemKey]",
+                  "      ,[ItemBranchkey]",
+                  "      ,[AccountNumber]",
+                  "      ,[AmountOpen]",
+                  "      ,[Branch]",
+                  "      ,[BuyerNumber]",
+                  "      ,[CarrierCode]",
+                  "      ,[CatalogName]",
+                  "      ,[CompanyCode]",
+                  "      ,[CostCenter]",
+                  "      ,[DescriptionLine1]",
+                  "      ,[DescriptionLine2]",
+                  "      ,[ExchangeRate]",
+                  "      ,[ForeignAmount]",
+                  "      ,[LastStatusCode]",
+                  "      ,[LineNumber]",
+                  "      ,[LineTypeCode]",
+                  "      ,[NextStatusCode]",
+                  "      ,[OrderNumber]",
+                  "      ,[OrderType]",
+                  "      ,[OriginalAmount]",
+                  "      ,[CancelDate]",
+                  "      ,[GLDate]",
+                  "      ,[OrderDate]",
+                  "      ,[OriginalPromisDate]",
+                  "      ,[PromiseDate]",
+                  "      ,[ReceptionDate]",
+                  "      ,[RequestedDate]",
+                  "      ,[ProjectNumber]",
+                  "      ,[PurchaseOrderCode01]",
+                  "      ,[QtyOpenQtyReceived]",
+                  "      ,[QuantityOpen]",
+                  "      ,[QuantityOrder]",
+                  "      ,[QuantityReceived]",
+                  "      ,[RelatedCO]",
+                  "      ,[RelatedLine]",
+                  "      ,[RelatedNumber]",
+                  "      ,[RelatedOrderType]",
+                  "      ,[Subledger]",
+                  "      ,[SubledgerType]",
+                  "      ,[SupplierNumber]",
+                  "      ,[TransactionOriginator]",
+                  "      ,[UnitCostPurchasing]",
+                  "      ,[UnitPrice]",
+                  "      ,[UOM]",
+                  "      ,[OrderCO]",
+                  "      ,[Currency]",
+                  "      ,[Shipto]",
+                  "      ,[StandardCost]",
+                  "      ,[LastInCost]",
+                  "      ,[LastInPrimaryVendorCost]",
+                  "      ,[CatalogPrice]",
                   "      ",
-                  "",
+                  "      ,[Currency_cad]",
+                  "      ",
+                  "      ,[CatalogPrice_EffectiveDate]",
+                  "      ,[CatalogPrice_ExpiredDate]",
+                  "      ,[PO_Type]",
+                  "      ,[Leadtime_ReceiptDate]",
+                  "      ,[Leadtime_OriginalPromisedDate]",
+                  "      ,[Leadtime_PromisedDeliveryDate]",
+                  "      ,[Leadtime_RequestDate]",
+                  "      ,[Supplierfirstpromiseddate]",
+                  "      ,[Leadtime_SupplierFirstPromisedDate]",
+                  "      ,[RoutingApproval]",
+                  "      ,[BuyerAcronym]",
+                  "      ,[Is_Preferred_Supplier]",
+                  "    ,OriginalAmount_cad AS OriginalAmount_cad_V0",
+                  " ,[CostCenterKey] AS BranchKey",
+                  "      ",
+                  " ,CASE WHEN(ROW_NUMBER() OVER (",
+                  "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
+                  "    ORDER BY ReceptionDate DESC))=1 ",
+                  "    THEN OriginalAmount_cad*1",
+                  "    ELSE 0 ",
+                  "    END AS OriginalAmount_cad",
                   "",
                   ",ROW_NUMBER() OVER (",
                   "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
                   "    ORDER BY ReceptionDate DESC",
                   ") AS LastReception",
                   "",
-                  "  FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -2076,17 +2225,89 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT *",
-              ", [CostCenterKey] as BranchKey",
+              "SELECT [ItemKey]",
+              "      ,[ItemBranchkey]",
+              "      ,[AccountNumber]",
+              "      ,[AmountOpen]",
+              "      ,[Branch]",
+              "      ,[BuyerNumber]",
+              "      ,[CarrierCode]",
+              "      ,[CatalogName]",
+              "      ,[CompanyCode]",
+              "      ,[CostCenter]",
+              "      ,[DescriptionLine1]",
+              "      ,[DescriptionLine2]",
+              "      ,[ExchangeRate]",
+              "      ,[ForeignAmount]",
+              "      ,[LastStatusCode]",
+              "      ,[LineNumber]",
+              "      ,[LineTypeCode]",
+              "      ,[NextStatusCode]",
+              "      ,[OrderNumber]",
+              "      ,[OrderType]",
+              "      ,[OriginalAmount]",
+              "      ,[CancelDate]",
+              "      ,[GLDate]",
+              "      ,[OrderDate]",
+              "      ,[OriginalPromisDate]",
+              "      ,[PromiseDate]",
+              "      ,[ReceptionDate]",
+              "      ,[RequestedDate]",
+              "      ,[ProjectNumber]",
+              "      ,[PurchaseOrderCode01]",
+              "      ,[QtyOpenQtyReceived]",
+              "      ,[QuantityOpen]",
+              "      ,[QuantityOrder]",
+              "      ,[QuantityReceived]",
+              "      ,[RelatedCO]",
+              "      ,[RelatedLine]",
+              "      ,[RelatedNumber]",
+              "      ,[RelatedOrderType]",
+              "      ,[Subledger]",
+              "      ,[SubledgerType]",
+              "      ,[SupplierNumber]",
+              "      ,[TransactionOriginator]",
+              "      ,[UnitCostPurchasing]",
+              "      ,[UnitPrice]",
+              "      ,[UOM]",
+              "      ,[OrderCO]",
+              "      ,[Currency]",
+              "      ,[Shipto]",
+              "      ,[StandardCost]",
+              "      ,[LastInCost]",
+              "      ,[LastInPrimaryVendorCost]",
+              "      ,[CatalogPrice]",
               "      ",
-              "",
+              "      ,[Currency_cad]",
+              "      ",
+              "      ,[CatalogPrice_EffectiveDate]",
+              "      ,[CatalogPrice_ExpiredDate]",
+              "      ,[PO_Type]",
+              "      ,[Leadtime_ReceiptDate]",
+              "      ,[Leadtime_OriginalPromisedDate]",
+              "      ,[Leadtime_PromisedDeliveryDate]",
+              "      ,[Leadtime_RequestDate]",
+              "      ,[Supplierfirstpromiseddate]",
+              "      ,[Leadtime_SupplierFirstPromisedDate]",
+              "      ,[RoutingApproval]",
+              "      ,[BuyerAcronym]",
+              "      ,[Is_Preferred_Supplier]",
+              "    ,OriginalAmount_cad AS OriginalAmount_cad_V0",
+              " ,[CostCenterKey] AS BranchKey",
+              "      ",
+              " ,CASE WHEN(ROW_NUMBER() OVER (",
+              "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
+              "    ORDER BY ReceptionDate DESC))=1 ",
+              "    THEN OriginalAmount_cad*1",
+              "    ELSE 0 ",
+              "    END AS OriginalAmount_cad",
               "",
               ",ROW_NUMBER() OVER (",
               "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
               "    ORDER BY ReceptionDate DESC",
               ") AS LastReception",
               "",
-              "  FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]"
+              "FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]"
             ]
           },
           {
@@ -2100,17 +2321,89 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT *",
-              ", [CostCenterKey] as BranchKey",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [ItemKey]",
+              "      ,[ItemBranchkey]",
+              "      ,[AccountNumber]",
+              "      ,[AmountOpen]",
+              "      ,[Branch]",
+              "      ,[BuyerNumber]",
+              "      ,[CarrierCode]",
+              "      ,[CatalogName]",
+              "      ,[CompanyCode]",
+              "      ,[CostCenter]",
+              "      ,[DescriptionLine1]",
+              "      ,[DescriptionLine2]",
+              "      ,[ExchangeRate]",
+              "      ,[ForeignAmount]",
+              "      ,[LastStatusCode]",
+              "      ,[LineNumber]",
+              "      ,[LineTypeCode]",
+              "      ,[NextStatusCode]",
+              "      ,[OrderNumber]",
+              "      ,[OrderType]",
+              "      ,[OriginalAmount]",
+              "      ,[CancelDate]",
+              "      ,[GLDate]",
+              "      ,[OrderDate]",
+              "      ,[OriginalPromisDate]",
+              "      ,[PromiseDate]",
+              "      ,[ReceptionDate]",
+              "      ,[RequestedDate]",
+              "      ,[ProjectNumber]",
+              "      ,[PurchaseOrderCode01]",
+              "      ,[QtyOpenQtyReceived]",
+              "      ,[QuantityOpen]",
+              "      ,[QuantityOrder]",
+              "      ,[QuantityReceived]",
+              "      ,[RelatedCO]",
+              "      ,[RelatedLine]",
+              "      ,[RelatedNumber]",
+              "      ,[RelatedOrderType]",
+              "      ,[Subledger]",
+              "      ,[SubledgerType]",
+              "      ,[SupplierNumber]",
+              "      ,[TransactionOriginator]",
+              "      ,[UnitCostPurchasing]",
+              "      ,[UnitPrice]",
+              "      ,[UOM]",
+              "      ,[OrderCO]",
+              "      ,[Currency]",
+              "      ,[Shipto]",
+              "      ,[StandardCost]",
+              "      ,[LastInCost]",
+              "      ,[LastInPrimaryVendorCost]",
+              "      ,[CatalogPrice]",
               "      ",
-              "",
+              "      ,[Currency_cad]",
+              "      ",
+              "      ,[CatalogPrice_EffectiveDate]",
+              "      ,[CatalogPrice_ExpiredDate]",
+              "      ,[PO_Type]",
+              "      ,[Leadtime_ReceiptDate]",
+              "      ,[Leadtime_OriginalPromisedDate]",
+              "      ,[Leadtime_PromisedDeliveryDate]",
+              "      ,[Leadtime_RequestDate]",
+              "      ,[Supplierfirstpromiseddate]",
+              "      ,[Leadtime_SupplierFirstPromisedDate]",
+              "      ,[RoutingApproval]",
+              "      ,[BuyerAcronym]",
+              "      ,[Is_Preferred_Supplier]",
+              "    ,OriginalAmount_cad AS OriginalAmount_cad_V0",
+              " ,[CostCenterKey] AS BranchKey",
+              "      ",
+              " ,CASE WHEN(ROW_NUMBER() OVER (",
+              "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
+              "    ORDER BY ReceptionDate DESC))=1 ",
+              "    THEN OriginalAmount_cad*1",
+              "    ELSE 0 ",
+              "    END AS OriginalAmount_cad",
               "",
               ",ROW_NUMBER() OVER (",
               "    PARTITION BY OrderNumber, ItemBranchKey, ItemKey, LineNumber",
               "    ORDER BY ReceptionDate DESC",
               ") AS LastReception",
               "",
-              "  FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "FROM [RDL00001_EnterpriseDataWarehouse].[dbo].[F_PurchaseOrderLine]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -2122,6 +2415,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "Short Date",
@@ -2452,22 +2746,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -2507,6 +2801,7 @@
           {
             "name": "SupplierKey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "SupplierKey",
             "sourceProviderType": "Integer"
           },
@@ -3841,23 +4136,19 @@
             "displayFolder": "Count"
           },
           {
-            "name": "YTD_Total_Amount_PO",
+            "name": "LY_Total_Amount_PO",
             "expression": [
               "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Total_Amount_PO],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "            ",
-              "    )",
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
               ")",
-              "",
               ""
             ],
             "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "YTD",
+            "displayFolder": "LY",
             "annotations": [
               {
                 "name": "Format",
@@ -3866,311 +4157,19 @@
             ]
           },
           {
-            "name": "YTD_Cancelled_Amount_PO",
+            "name": "LY_Cancelled_Amount_PO",
             "expression": [
               "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Cancelled_Amount_PO],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
               ")",
               ""
             ],
             "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "YTD",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "YTD_Active_Line_Count",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Active_Line_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    ),",
-              "    ISBLANK('D_PO_CancelDate'[Date])",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Cancelled_Line_Count",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Cancelled_Line_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Total_Line_Count",
-            "expression": [
-              "",
-              "CALCULATE (",
-              "    [Total_Line_Count],",
-              "    FILTER (",
-              "        ALL ( 'D_PO_OrderDate' ),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX ( 'D_PO_OrderDate'[FiscalYear] )",
-              "            && 'D_PO_OrderDate'[Date] <= MAX ( 'D_PO_OrderDate'[Date] )",
-              "    )",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Total_Distinct_PO_Count",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    DISTINCTCOUNT('F_PurchaseOrderLine'[OrderNumber]),",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Cancelled_Distinct_PO_Count",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Cancelled_Distinct_PO_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Total_Amount_PO_Freight",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Total_Amount_PO_Freight],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "YTD",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "YTD_Total_Amount_PO_Tariffs",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Total_Amount_PO_Tariffs],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "YTD",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "YTD_Total_Amount_PO_Rush",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Total_Amount_PO_Rush],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "YTD",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "YTD_Average_Leadtime_ReceiptDate",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    AVERAGE('F_PurchaseOrderLine'[Leadtime_ReceiptDate]),",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Average_Leadtime_PromisedDeliveryDate",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Average_Leadtime_PromisedDeliveryDate],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Average_Leadtime_OriginalPromisedDate",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Average_Leadtime_OriginalPromisedDate],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Average_Leadtime_RequestDate",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Average_Leadtime_RequestDate],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Active_ItemInPO_Distinct_Count",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Active_ItemInPO_Distinct_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Active_ItemInPO_Count",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Active_ItemInPO_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "            && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              "    )",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "LYTD_Total_Amount_PO",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Total_Amount_PO],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "LYTD",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "LYTD_Cancelled_Amount_PO",
-            "expression": [
-              " ",
-              "CALCULATE(",
-              "    [Cancelled_Amount_PO],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "LYTD",
+            "displayFolder": "LY",
             "annotations": [
               {
                 "name": "Format",
@@ -4191,87 +4190,82 @@
               ")"
             ],
             "formatString": "0",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "LYTD_Cancelled_Line_Count",
+            "name": "LY_Cancelled_Line_Count",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Cancelled_Line_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "LYTD_Total_Line_Count",
+            "name": "LY_Total_Line_Count",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Total_Line_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "LYTD_Total_Distinct_PO_Count",
+            "name": "LY_Total_Distinct_PO_Count",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    DISTINCTCOUNT('F_PurchaseOrderLine'[OrderNumber]),",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "LYTD_Cancelled_Distinct_PO_Count",
+            "name": "LY_Cancelled_Distinct_PO_Count",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Cancelled_Distinct_PO_Count],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "LYTD_Total_Amount_PO_Freight",
+            "name": "LY_Total_Amount_PO_Freight",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Total_Amount_PO_Freight],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "LYTD",
+            "displayFolder": "LY",
             "annotations": [
               {
                 "name": "Format",
@@ -4280,20 +4274,19 @@
             ]
           },
           {
-            "name": "LYTD_Total_Amount_PO_Tariffs",
+            "name": "LY_Total_Amount_PO_Tariffs",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Total_Amount_PO_Tariffs],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "LYTD",
+            "displayFolder": "LY",
             "annotations": [
               {
                 "name": "Format",
@@ -4302,20 +4295,19 @@
             ]
           },
           {
-            "name": "LYTD_Total_Amount_PO_Rush",
+            "name": "LY_Total_Amount_PO_Rush",
             "expression": [
-              " ",
+              "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Total_Amount_PO_Rush],",
-              "    FILTER(",
-              "        ALL('D_PO_OrderDate'),",
-              "        'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "            && 'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              "    )",
-              ")"
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
+              ")",
+              ""
             ],
             "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "displayFolder": "LYTD",
+            "displayFolder": "LY",
             "annotations": [
               {
                 "name": "Format",
@@ -4336,23 +4328,7 @@
               ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LY_Average_Leadtime_SupplierFirstPromisedDate",
-            "expression": [
-              "",
-              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
-              "RETURN",
-              "CALCULATE(",
-              "    [Average_Leadtime_SupplierFirstPromisedDate],",
-              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
             "name": "LY_Average_Leadtime_OriginalPromisedDate",
@@ -4367,7 +4343,7 @@
               ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
             "name": "LY_Average_Leadtime_PromisedDeliveryDate",
@@ -4382,7 +4358,7 @@
               ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
             "name": "LY_Average_Leadtime_RequestDate",
@@ -4397,7 +4373,7 @@
               ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
+            "displayFolder": "LY"
           },
           {
             "name": "MTD_Average_Leadtime_ReceiptDate",
@@ -4441,124 +4417,49 @@
             "displayFolder": "Count"
           },
           {
-            "name": "YTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate",
+            "name": "LY_Ratio_Early_ReceiptDate_PromisedDeliveryDate",
             "expression": [
               "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Ratio_Early_ReceiptDate_PromisedDeliveryDate],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear])",
-              "    && 'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
               ")",
-              ")"
+              ""
             ],
             "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "YTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "YTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance",
+            "name": "LY_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance",
             "expression": [
               "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
               ")",
-              ")"
+              ""
             ],
             "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "YTD"
+            "displayFolder": "LY"
           },
           {
-            "name": "YTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance",
+            "name": "LY_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance",
             "expression": [
               "",
+              "VAR Last_FY = MAX('D_PO_OrderDate'[FiscalYear]) - 1",
+              "RETURN",
               "CALCULATE(",
               "    [Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
+              "    'D_PO_OrderDate'[FiscalYear] = Last_FY",
               ")",
-              ")"
+              ""
             ],
             "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "LYTD_Ratio_Early_ReceiptDate_PromisedDeliveryDate",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Early_ReceiptDate_PromisedDeliveryDate],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
-              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LYTD_Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_OnTime_ReceiptDate_PromisedDeliveryDate_WithTolerance],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
-              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LYTD_Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_PromisedDeliveryDate_WithTolerance],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
-              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "YTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "YTD"
-          },
-          {
-            "name": "YTD_Ratio_Late_ReceiptDate_RequestDate",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "YTD"
+            "displayFolder": "LY"
           },
           {
             "name": "AverageRequest_versus_AveragePromisedDelivery",
@@ -4788,21 +4689,6 @@
             "displayFolder": "LeadTime"
           },
           {
-            "name": "YTD_Average_Leadtime_JDE",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Average_Leadtime_JDE],",
-              "FILTER( ALL('D_PO_OrderDate'),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ")"
-            ],
-            "formatString": "0.00",
-            "displayFolder": "YTD"
-          },
-          {
             "name": "LY_Average_Leadtime_JDE",
             "expression": [
               "",
@@ -4815,343 +4701,7 @@
               ""
             ],
             "formatString": "0.00",
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "Active_Distinct_PO_Count",
-            "expression": [
-              "",
-              "VAR Orders =",
-              "    SUMMARIZE(",
-              "        F_PurchaseOrderLine,",
-              "        F_PurchaseOrderLine[OrderNumber]",
-              "    )",
-              "VAR OrdersWithStatus =",
-              "    ADDCOLUMNS(",
-              "        Orders,",
-              "        \"__po_status\",",
-              "            VAR total = CALCULATE([Total_Line_Count])",
-              "            VAR canc  = CALCULATE([Cancelled_Line_Count])",
-              "            RETURN IF(total > 0 && total = canc, \"Cancelled\", \"Active\")",
-              "    )",
-              "RETURN",
-              "COUNTROWS(",
-              "    FILTER(",
-              "        OrdersWithStatus,",
-              "        [__po_status] = \"Active\"",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Count"
-          },
-          {
-            "name": "Total_CountDistinct_PO",
-            "expression": [
-              "",
-              "    [Active_Distinct_PO_Count] + [Cancelled_Distinct_PO_Count]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Cancelled_Original_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM('F_PurchaseOrderLine'[OriginalAmount]),",
-              "    FILTER(",
-              "        'D_PO_CancelDate',",
-              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Total_Original_Amount_PO",
-            "expression": [
-              "",
-              "    [Cancelled_Original_Amount_PO] + [Active_Original_Amount_PO]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Active_Original_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[OriginalAmount]), ",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Total_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "    [Cancelled_Foreign_Amount_PO] + [Active_Foreign_Amount_PO]",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Total"
-          },
-          {
-            "name": "Cancelled_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
-              "    FILTER(",
-              "        'D_PO_CancelDate',",
-              "        NOT ISBLANK('D_PO_CancelDate'[Date])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Active_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]), ",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[CancelDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "%_Cancelled_Original_Amount_PO",
-            "expression": [
-              "",
-              "    DIVIDE([Cancelled_Original_Amount_PO], [Total_Original_Amount_PO], 0)",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "displayFolder": "KPI"
-          },
-          {
-            "name": "%_Cancelled_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "    DIVIDE([Cancelled_Foreign_Amount_PO], [Total_Foreign_Amount_PO], 0)",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "isHidden": true,
-            "displayFolder": "KPI"
-          },
-          {
-            "name": "Not_Received_Foreign_Amount_PO",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM(F_PurchaseOrderLine[ForeignAmount]),",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        ISBLANK(F_PurchaseOrderLine[ReceptionDate])",
-              "    )",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Sum"
-          },
-          {
-            "name": "Display_cie",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    SELECTEDVALUE(D_Company[Cie]),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Display"
-          },
-          {
-            "name": "Display_currency_Company+",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    CONCATENATEX(",
-              "        VALUES(D_Company[CurrencyCode]),",
-              "        D_Company[CurrencyCode],",
-              "        \"\", \"\"",
-              "    ),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Display"
-          },
-          {
-            "name": "Display_currency_Company",
-            "expression": [
-              "",
-              "IF(",
-              "    ISFILTERED(D_Company[Cie]),",
-              "    SELECTEDVALUE(D_Company[CurrencyCode]),",
-              "    BLANK()",
-              ")",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Display"
-          },
-          {
-            "name": "Parcial_PO_Recieved_Count",
-            "expression": [
-              "",
-              "VAR OrdersWithAnyReceipt =",
-              "    DISTINCT (",
-              "        SELECTCOLUMNS (",
-              "            FILTER ( F_PurchaseOrderLine, NOT ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
-              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
-              "        )",
-              "    )",
-              "VAR OrdersWithAnyMissingReceipt =",
-              "    DISTINCT (",
-              "        SELECTCOLUMNS (",
-              "            FILTER ( F_PurchaseOrderLine, ISBLANK ( F_PurchaseOrderLine[ReceptionDate] ) ),",
-              "            \"OrderNumber\", F_PurchaseOrderLine[OrderNumber]",
-              "        )",
-              "    )",
-              "RETURN",
-              "    COUNTROWS ( INTERSECT ( OrdersWithAnyReceipt, OrdersWithAnyMissingReceipt ) )",
-              ""
-            ],
-            "isHidden": true,
-            "displayFolder": "Count"
-          },
-          {
-            "name": "Active_Amount_PO",
-            "expression": " [Total_Amount_PO]-[Cancelled_Amount_PO]",
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "isHidden": true,
-            "displayFolder": "Sum",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
-          },
-          {
-            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate_WithTolerance",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate_WithTolerance],",
-              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "isHidden": true,
-            "displayFolder": "MTD"
-          },
-          {
-            "name": "MTD_Ratio_Late_ReceiptDate_RequestDate",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    [Ratio_Late_ReceiptDate_RequestDate],",
-              "    'D_PO_OrderDate'[FiscalMonth] = MAX('D_PO_OrderDate'[FiscalMonth]) &&",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) &&",
-              "    'D_PO_OrderDate'[Date] <= MAX('D_PO_OrderDate'[Date])",
-              ")",
-              ""
-            ],
-            "formatString": "0.00%;-0.00%;0.00%",
-            "isHidden": true,
-            "displayFolder": "MTD"
-          },
-          {
-            "name": "LYTD_AverageRequest_versus_AveragePromisedDelivery",
-            "expression": [
-              "",
-              "AVERAGEX(",
-              "    FILTER(",
-              "        F_PurchaseOrderLine,",
-              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
-              "        NOT ISBLANK(F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate])",
-              "    ),",
-              "    F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_PromisedDeliveryDate]",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LYTD_AverageRequest_versus_AverageSupplierFirstPromised",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    AVERAGEX(",
-              "        FILTER(",
-              "            F_PurchaseOrderLine,",
-              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_RequestDate]) &&",
-              "            NOT ISBLANK(F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate])",
-              "        ),",
-              "        F_PurchaseOrderLine[Leadtime_RequestDate] - F_PurchaseOrderLine[Leadtime_SupplierFirstPromisedDate]",
-              "    ),",
-              "    'D_PO_OrderDate'[FiscalYear] = MAX('D_PO_OrderDate'[FiscalYear]) - 1 &&",
-              "    'D_PO_OrderDate'[Date] <= EDATE(MAX('D_PO_OrderDate'[Date]), -12)",
-              ")",
-              ""
-            ],
-            "formatString": "0.00",
-            "isHidden": true,
-            "displayFolder": "LYTD"
-          },
-          {
-            "name": "LY_Total_Amount_PO",
-            "expression": [
-              "",
-              "VAR Last_FY= MAX(D_PO_OrderDate[FiscalYear])- 1",
-              "    Return",
-              "    CALCULATE(",
-              "        [Total_Amount_PO],'D_PO_OrderDate'[FiscalYear]=Last_FY",
-              "    ",
-              "",
-              ")"
-            ],
-            "formatString": "\"\"#,0.00;-\"\"#,0.00;\"\"#,0.00",
-            "annotations": [
-              {
-                "name": "Format",
-                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"4105\" DisplayName=\"\" Symbol=\"\" PositivePattern=\"0\" NegativePattern=\"1\" /></Format>"
-              }
-            ]
+            "displayFolder": "LY"
           }
         ]
       },
@@ -5758,6 +5308,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -5840,22 +5391,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -6124,6 +5675,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -6206,22 +5758,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -6490,6 +6042,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -6572,22 +6125,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -6856,6 +6409,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -6938,22 +6492,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -7222,6 +6776,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -7304,22 +6859,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -7588,6 +7143,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "isKey": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
@@ -7671,22 +7227,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "Month"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -7718,6 +7274,7 @@
           {
             "name": "Date_key",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "Date_key",
             "sourceProviderType": "Integer"
           },
@@ -8423,6 +7980,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
             "sourceProviderType": "Date"
@@ -8493,22 +8051,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "MONTH"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -8710,6 +8268,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
             "sourceProviderType": "Date"
@@ -8780,22 +8339,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "MONTH"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -8997,6 +8556,7 @@
           {
             "name": "Id",
             "dataType": "dateTime",
+            "isHidden": true,
             "sourceColumn": "Id",
             "formatString": "General Date",
             "sourceProviderType": "Date"
@@ -9067,22 +8627,22 @@
         ],
         "hierarchies": [
           {
-            "name": "YMW",
+            "name": "YMW_Fiscal",
             "levels": [
               {
-                "name": "Year",
+                "name": "FiscalYear",
                 "ordinal": 0,
-                "column": "Year"
+                "column": "FiscalYear"
               },
               {
-                "name": "Month",
+                "name": "FiscalMonth",
                 "ordinal": 1,
-                "column": "MONTH"
+                "column": "FiscalMonth"
               },
               {
-                "name": "WeekOfYear",
+                "name": "FiscalWeekOfYear",
                 "ordinal": 2,
-                "column": "WeekOfYear"
+                "column": "FiscalWeekOfYear"
               }
             ]
           }
@@ -9114,6 +8674,7 @@
           {
             "name": "CatalogKey",
             "dataType": "int64",
+            "isHidden": true,
             "sourceColumn": "CatalogKey",
             "sourceProviderType": "Integer"
           },

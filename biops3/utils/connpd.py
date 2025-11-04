@@ -1,7 +1,7 @@
-##CONNECTION
+# CONNECTION
 
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 # Define connection parameters
 server = "NADWDAT1A"
@@ -16,28 +16,21 @@ engine = create_engine(connection_string)
 
 
 def execute_query(query):
-    """
-    Execute a SQL query and return the result as a pandas DataFrame.
 
-    Parameters:
-    query (str): The SQL query to execute.
+    # Execute a SQL query and return the result as a pandas DataFrame.
 
-    Returns:
-    pd.DataFrame: The result of the query.
-    """
     with engine.connect() as connection:
         result = pd.read_sql(query, connection)
     return result
 
 
-## otra forma de hacerlo: df = pd.read_sql(query, engine)
-# Read data into DataFrame V_F4311
-# this one is to large
-# V_F4311 = execute_query('SELECT * FROM RDL00001_EnterpriseDataLanding.[JDE_BI_OPS].[V_F4311]')
+def executeQuery(stored_procedure):
+    with engine.connect() as connection:
+        connection.execute(text(stored_procedure))  # No fetch here
+        print("Stored procedure executed successfully.")
 
 
-# Cataloge_BI_OPS.head()
-
-
-# Display the first few rows
-# Cataloge_BI_OPS.head()
+# # Execute the stored procedure
+# with engine.connect() as connection:
+#     connection.execute(text(stored_procedure))  # No fetch here
+#     print("Stored procedure executed successfully.")

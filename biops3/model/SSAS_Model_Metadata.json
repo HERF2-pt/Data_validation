@@ -1,0 +1,11 @@
+{
+  "tables": [
+    {
+      "ID": 10,
+      "ModelID": 1,
+      "Name": "Accounts",
+      "DataCategory": null,
+      "Description": null,
+      "IsHidden": 0,
+      "TableStorageID": 421,
+      "ModifiedTime": 

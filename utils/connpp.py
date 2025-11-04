@@ -24,16 +24,7 @@ def execute_queryPP(query, database="RDL00001_EnterpriseDataStaging"):
 
 
 def execute_queryST(query, database="RDL00001_EnterpriseDataStaging"):
-    """
-    Execute a SQL query and return the result as a pandas DataFrame.
 
-    Parameters:
-    query (str): The SQL query to execute.
-    database (str): The name of the database (default is RDL00001_EnterpriseDataStaging).
-
-    Returns:
-    pd.DataFrame: The result of the query.
-    """
     engine = get_engine(database)
     with engine.connect() as connection:
         result = pd.read_sql(query, connection)

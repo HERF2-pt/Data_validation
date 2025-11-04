@@ -1,4 +1,4 @@
-##CONNECTION
+# CONNECTION
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -30,7 +30,7 @@ def execute_query(query):
     return result
 
 
-## otra forma de hacerlo: df = pd.read_sql(query, engine)
+# otra forma de hacerlo: df = pd.read_sql(query, engine)
 # Read data into DataFrame V_F4311
 # this one is to large
 # V_F4311 = execute_query('SELECT * FROM RDL00001_EnterpriseDataLanding.[JDE_BI_OPS].[V_F4311]')
@@ -41,3 +41,11 @@ def execute_query(query):
 
 # Display the first few rows
 # Cataloge_BI_OPS.head()
+def executeQuery(query):
+    try:
+        with engine.connect() as connection:
+            result = connection.execute(query)
+        return result
+    except Exception as e:
+        print(f"Query failed: {e}")
+        return False

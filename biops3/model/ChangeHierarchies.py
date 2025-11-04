@@ -1,6 +1,6 @@
 import json
 # Define the file path (use r'' to avoid needing to double the backslashes)
-file_path = r"C:\Repos\PTG.BI.PTSA.SSAS.RDL00001_Procurement_V2\RDL00001_Procurement_v2\RDL00001_Procurement_v2\model.bim"
+file_path = r"C:\Repos\PTG.BI.PTSA.SSAS.RDL00001_Procurement_V2\RDL00001_Procurement_v2\RDL00001_Procurement\model.bim"
 
 # Load the JSON file into a Python dictionary
 with open(file_path, "r", encoding="utf-8") as f:

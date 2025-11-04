@@ -12,6 +12,8 @@
 
   
 
+  
+
 --  =============================================  
 
 --  Author:		<Author , ,Name>  
@@ -51,6 +53,34 @@ BEGIN
 	    IF  OBJECT_ID('tempdb..##TMP_F4102')  is  not  null  DROP  TABLE  ##TMP_F4102  
 
 ---  ##TMP_F4102  
+
+DROP  TABLE  IF  EXISTS  #F00092  
+
+SELECT  LTRIM(RTRIM(CAST(T3MCU_CostCenter  AS  NVARCHAR(50))))  as  MCU  
+
+           ,  TRY_CONVERT(BIGINT ,  T3SBN1_SuppDataNumericKey1)            as  SBA1  
+
+           ,  T3RMK_NameRemark  
+
+           ,  CAST(T3UPDJ_UpdatedDate  AS  DATE)                                          as  UpdatedDate  
+
+           ,  ROW_NUMBER()  OVER  (PARTITION  BY  T3MCU_CostCenter  
+
+                                                                           ,  T3SBN1_SuppDataNumericKey1  
+
+                                                    ORDER  BY  CAST(T3UPDJ_UpdatedDate  AS  DATE)  DESC  
+
+                                                  )                                                                    as  rn  
+
+INTO  #F00092  
+
+FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F00092]  
+
+WHERE  T3TYDT_TypeofData  =  'PC'  
+
+            AND  T3SDB_SupplementalDatabaseCode  =  'IB'  
+
+  
 
 	    select    
 
@@ -104,23 +134,15 @@ BEGIN
 
 	    into  ##TMP_F4102  
 
-	    from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]    
+	    from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4102]  IB  
 
-	    LEFT  JOIN  (SELECT  TRIM(U.T3MCU_CostCenter)                                          T3MCU_CostCenter  
+	      left  join  #F00092                                                                                F00092  
 
-           ,  CAST(U.[T3SBN1_SuppDataNumericKey1]  AS  CHAR)  T3SBN1_SuppDataNumericKey1  
+                ON  F00092.rn  =  1  
 
-           ,  MAX(T3RMK_NameRemark)                                                T3RMK_NameRemark  
+                      AND  TRIM(IB.IBMCU_CostCenter)  =  F00092.MCU  
 
-FROM  [RDL00001_EnterpriseDataLanding].JDE_BI_OPS.V_F00092  U  
-
-GROUP  BY  U.T3MCU_CostCenter  
-
-               ,  U.[T3SBN1_SuppDataNumericKey1])  U  
-
-    ON  trim(IBMCU_CostCenter)  =  TRIM(U.T3MCU_CostCenter)  
-
-    AND  CAST(IBITM_IdentifierShortItem  AS  CHAR)  =  CAST(U.[T3SBN1_SuppDataNumericKey1]  AS  CHAR)  
+                      AND  TRY_CONVERT(BIGINT ,  IB.IBITM_IdentifierShortItem)  =  F00092.SBA1  
 
 	    /*T1  
 
@@ -259,6 +281,7 @@ select
        ,T3.DRDL01_Description001  as  PRP2Desc  
 
        ,T4.DRDL01_Description001  as  PRP3Desc  
+
        ,IBORIG_CountryOfOrigin  as  CountryOfOrigin  
 
        ,  IBROPI_ReorderPointInput  as  ReOrderInput  

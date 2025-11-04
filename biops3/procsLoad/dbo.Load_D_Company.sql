@@ -12,8 +12,6 @@
 
   
 
-  
-
 --  =============================================  
 
 --  Author:		<Author , ,SAMN>  
@@ -52,15 +50,19 @@ BEGIN
 
         
 
-            distinct      T1.MCCO_Company  as  CompanyCode ,  
+            distinct        
+
+	      Trim  (T1.MCCO)  as  CompanyCode ,  
 
 	      Trim  (T2.CCNAME)  as  CompanyName ,  
 
-	      Trim(T2.CCCRCD)  as  CurrencyCode  
+	      Trim(T2.CCCRCD)  as  CurrencyCode ,  
+
+	      ISNULL(CieAcronym.DRDL01_Description001 ,  'XX')  as  CieAcronym  
 
   
 
-            from  [RDL00001_EnterpriseDataLanding].JDE.F0006_V2  T1  
+            from  [RDL00001_EnterpriseDataLanding].JDE.F0006  T1  
 
   
 
@@ -68,15 +70,21 @@ BEGIN
 
   
 
-	    ON  T1.MCCO_Company  =  LTRIM(RTRIM(T2.CCCO))  
+	    ON  LTRIM(RTRIM(MCCO))  =  LTRIM(RTRIM(CCCO))  
 
   
 
-	    where  Trim  (T1.MCCO_Company)      in  (  N'00001'   ,  N'00024'   ,    N'00077'   ,N'09011' ,    N'09052' ,  N'99050' ,  N'00074' ,  N'09041'  )  
+	    LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F0005]  CieAcronym    
 
-	    ---where  Trim  (T1.MCCO_Company)      in  (  N'00001'   ,    N'00077'   ,N'09011' ,    N'09052'  )  
+	    ON  trim(CieAcronym.DRSY_ProductCode)  =  '00'  
 
-	      
+	      AND  trim(CieAcronym.DRRT_UserDefinedCodes)  =  '21'  
+
+	      AND  trim(T1.MCRP21)  =  trim(CieAcronym.DRKY_UserDefinedCode)  
+
+  
+
+	    where  trim(T1.[MCMCU])    in  (  '1' ,  '77'   ,  '9011' ,  '9052' ,'9041' ,  '24')  AND  T1.MCSTYL  =  'BS'  
 
   
 
@@ -102,7 +110,11 @@ BEGIN
 
           
 
-        t.CompanyName=s.CompanyName  
+        t.CompanyName=s.CompanyName ,  
+
+	t.[CurrencyCode]  =  s.CurrencyCode ,  
+
+	t.[CieAcronym]  =  s.CieAcronym  
 
   
 
@@ -124,7 +136,9 @@ BEGIN
 
 		      CompanyName ,  
 
-		      CurrencyCode  
+		      CurrencyCode ,  
+
+		      [CieAcronym]  
 
                       )  
 
@@ -134,7 +148,9 @@ Values  (s.CompanyCode ,
 
 		s.CompanyName ,  
 
-		s.CurrencyCode  
+		s.CurrencyCode ,  
+
+		s.CieAcronym  
 
   
 

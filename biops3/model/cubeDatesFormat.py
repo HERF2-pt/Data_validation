@@ -2,7 +2,8 @@ import json
 from copy import deepcopy
 
 # Step 1: Load the JSON file into a Python dictionary
-with open("modelbim.json", "r", encoding="utf-8") as f:
+file_path = r"C:\Repos\PTG.BI.PTSA.SSAS.RDL00001_Procurement_V2\RDL00001_Procurement_v2\RDL00001_Procurement_v2\model.bim"
+with open(file_path, "r", encoding="utf-8") as f:
     model_json = json.load(f)
 
 target_tables = {

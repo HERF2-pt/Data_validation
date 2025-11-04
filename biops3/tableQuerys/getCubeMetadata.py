@@ -20,8 +20,8 @@ from utils.olapConn import execute_mdx_query
 ###
 # Define your parameters
 ####
-server = 'cube01ProcurementPP.premiertech.com'
-cube = 'RDL00001_Procurement'
+server = 'NADWOLAP1A'
+cube = 'RDL00002_99011_GL_Transactions'
 measuresQuery = "SELECT * FROM $SYSTEM.MDSCHEMA_MEASURES"
 ##
 ##
@@ -47,8 +47,9 @@ for key, query in olapCubeQueries.items():
 # Example: Accessing the measures DataFrame
 cubeMetadata['measures_df']
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+Excel_file = os.path.join(script_dir, f"{cube}_metadata.xlsx")
 # Define your Excel file path
-Excel_file = "cube_metadata.xlsx"
 # Check if the file exists
 file_exists = os.path.exists(Excel_file)
 

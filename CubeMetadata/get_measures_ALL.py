@@ -1,9 +1,13 @@
+
 from utils.olapConn import query_cube
 import pandas as pd
 import openpyxl
 from openpyxl import load_workbook
 from datetime import datetime
+import sys
 import os
+# Ensure parent directory is in path for module import
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 serverName = 'NADWOLAPPP1A'

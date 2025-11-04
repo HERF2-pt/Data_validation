@@ -168,6 +168,184 @@ BEGIN
 
                                                                                                                                                                        ,  'N'  
 
+        DROP  TABLE  IF  EXISTS  #F4311  
+
+        SELECT  *  
+
+        INTO  #F4311  
+
+        FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4311]  F4311  
+
+        WHERE  F4311.PDKCOO_CompanyKeyOrderNo  IN  (  '00001' ,  '00077' ,  '09011' ,  '09052' ,  '09041' ,  '00024'  )  
+
+                    AND  F4311.PDLNTY_LineType  in  (  'S' ,  'J' ,  'N' ,  'F' ,  'XX' ,  'ZZ' ,  'ND' ,  'SC' ,  'D' ,  'X'  )  
+
+                    AND  F4311.PDDCTO_OrderType  in  (  'OP' ,  'ON'  )  
+
+                    AND  F4311.PDTORG_TransactionOriginator  not  in  (  'NEXONIAUPD'  )  
+
+                    AND  F4311.PDTRDJ_DateTransactionJulian  >=  @BeginDate;  
+
+        DROP  TABLE  IF  EXISTS  #F41061  
+
+        SELECT  CBAN8_AddressNumber  
+
+                   ,  CBITM_IdentifierShortItem  
+
+                   ,  CBPRRC_PurchasingUnitPrice  AS  CatalogPrice  
+
+                   ,  CBCRCD_CurrencyCodeFrom  
+
+                   ,  CBEFTJ_DateEffectiveJulian1  
+
+                   ,  CBEXDJ_DateExpiredJulian1  
+
+                   ,  CBCATN_CatalogName  
+
+        INTO  #F41061  
+
+        FROM  
+
+        (  
+
+                SELECT  CBAN8_AddressNumber  
+
+                           ,  CBITM_IdentifierShortItem  
+
+                           ,  CBCATN_CatalogName  
+
+                           ,  CBPRRC_PurchasingUnitPrice  
+
+                           ,  CBEFTJ_DateEffectiveJulian1  
+
+                           ,  CBEXDJ_DateExpiredJulian1  
+
+                           ,  CBCRCD_CurrencyCodeFrom  
+
+                           ,  ROW_NUMBER()  OVER  (PARTITION  BY  CBAN8_AddressNumber  
+
+                                                                                           ,  CBITM_IdentifierShortItem  
+
+                                                                                           ,  CBCATN_CatalogName  
+
+                                                                    ORDER  BY  CBEFTJ_DateEffectiveJulian1  DESC  
+
+                                                                  )  AS  rn  
+
+                FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F41061]  
+
+        )  AS  ranked  
+
+        WHERE  rn  =  1  
+
+  
+
+        --DROP  TABLE  IF  EXISTS  #F43199  
+
+        --SELECT  MIN([OLPDDJ_ScheduledPickDate])  [OLPDDJ_ScheduledPickDate]  -- ,[OLUPMJ_DateUpdated]  
+
+        --                               ,  [OLDOCO_DocumentOrderInvoiceE]  
+
+        --                               ,  [OLDCTO_OrderType]  
+
+        --                               ,  [OLKCOO_CompanyKeyOrderNo]  
+
+        --                               ,  [OLLNID_LineNumber]  
+
+        --	INTO  #F43199  
+
+        --                    FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F43199]  
+
+        --                    GROUP  BY  [OLDOCO_DocumentOrderInvoiceE]  
+
+        --                                   ,  [OLDCTO_OrderType]  
+
+        --                                   ,  [OLKCOO_CompanyKeyOrderNo]  
+
+        --                                   ,  [OLLNID_LineNumber]  
+
+        DROP  TABLE  IF  EXISTS  #PR_KEYS  
+
+        SELECT  DISTINCT  
+
+                PR.PRDOCO_DocumentOrderInvoiceE  AS  DOCO  
+
+             ,  PR.PRMCU_CostCenter                          AS  MCU  
+
+             ,  PR.PRDCTO_OrderType                          AS  DCTO  
+
+             ,  PR.PRLNID_LineNumber                        AS  LNID  
+
+        INTO  #PR_KEYS  
+
+        FROM  [RDL00001_EnterpriseDataLanding].JDE_BI_OPS.V_F43121  PR  
+
+        DROP  TABLE  IF  EXISTS  #OL_MIN  
+
+        SELECT  OL.OLDOCO_DocumentOrderInvoiceE        AS  DOCO  
+
+                   ,  OL.OLMCU_CostCenter                                AS  MCU  
+
+                   ,  OL.OLDCTO_OrderType                                AS  DCTO  
+
+                   ,  OL.OLLNID_LineNumber                              AS  LNID  
+
+                   ,  MIN(OL.OLUKID_UniqueKeyIDInternal)  AS  MIN_OLUKID  
+
+        INTO  #OL_MIN  
+
+        FROM  [RDL00001_EnterpriseDataLanding].JDE_BI_OPS.V_F43199  OL  
+
+        WHERE  OL.OLPODC01_PurchaseLineCode01  =  'C'  
+
+        GROUP  BY  OL.OLDOCO_DocumentOrderInvoiceE  
+
+                       ,  OL.OLMCU_CostCenter  
+
+                       ,  OL.OLDCTO_OrderType  
+
+                       ,  OL.OLLNID_LineNumber  
+
+        DROP  TABLE  IF  EXISTS  #SupplierFD  
+
+        SELECT  K.DOCO  
+
+                   ,  K.DCTO  
+
+                   ,  K.MCU  
+
+                   ,  K.LNID  
+
+                   ,  OL.OLPDDJ_ScheduledPickDate  AS  SupplierFirstPromisedDate  
+
+        INTO  #SupplierFD  
+
+        FROM  #PR_KEYS                                                                                                            K  
+
+                LEFT  JOIN  #OL_MIN                                                                                            M  
+
+                        ON  M.DOCO  =  K.DOCO  
+
+                              AND  M.MCU  =  K.MCU  
+
+                              AND  M.DCTO  =  K.DCTO  
+
+                              AND  M.LNID  =  K.LNID  
+
+                LEFT  JOIN  [RDL00001_EnterpriseDataLanding].JDE_BI_OPS.V_F43199  OL  
+
+                        ON  OL.OLDOCO_DocumentOrderInvoiceE  =  M.DOCO  
+
+                              AND  OL.OLMCU_CostCenter  =  M.MCU  
+
+                              AND  OL.OLDCTO_OrderType  =  M.DCTO  
+
+                              AND  OL.OLLNID_LineNumber  =  M.LNID  
+
+                              AND  OL.OLUKID_UniqueKeyIDInternal  =  M.MIN_OLUKID  
+
+        WHERE  OL.OLPDDJ_ScheduledPickDate  IS  NOT  NULL;  
+
         INSERT  INTO  [dbo].[F_PurchaseOrderLine]  
 
         (  
@@ -314,7 +492,7 @@ BEGIN
 
                    ,  F4311.PDLNTY_LineType                                                                                                  as  LineTypeCode  
 
-                   ,  F4311.PDNXTR_StatusCodeNext                                                                                  as  NextStatusCode  
+                   ,  F4311.PDNXTR_StatusCodeNext                                                                                      as  NextStatusCode  
 
                    ,  F4311.PDDOCO_DocumentOrderInvoiceE                                                                        as  OrderNumber  
 
@@ -384,13 +562,15 @@ BEGIN
 
                    ,  F41061.CBEXDJ_DateExpiredJulian1  
 
-                   ,  F43199.OLPDDJ_ScheduledPickDate  
+                   ,  F43199.SupplierFirstPromisedDate  
 
                    ,  F4311.PDARTG_RoutingApproval                                                                                    AS  RoutingApproval  
 
                    ,  V0101.ABALKY_AlternateAddressKey                                                                            AS  BuyerAcronym  
 
-        from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4311]                                                  F4311  
+        --from  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4311]                                                  F4311  
+
+        from  #F4311                                                                                                                                                    F4311  
 
                 LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F4301]                                F4301  
 
@@ -422,57 +602,59 @@ BEGIN
 
                 LEFT  JOIN  
 
-                (  
+                --(  
 
-                        SELECT  CBAN8_AddressNumber  
+                --        SELECT  CBAN8_AddressNumber  
 
-                                   ,  CBITM_IdentifierShortItem  
+                --                   ,  CBITM_IdentifierShortItem  
 
-                                   ,  CBPRRC_PurchasingUnitPrice  AS  CatalogPrice  
+                --                   ,  CBPRRC_PurchasingUnitPrice  AS  CatalogPrice  
 
-                                   ,  CBCRCD_CurrencyCodeFrom  
+                --                   ,  CBCRCD_CurrencyCodeFrom  
 
-                                   ,  CBEFTJ_DateEffectiveJulian1  
+                --                   ,  CBEFTJ_DateEffectiveJulian1  
 
-                                   ,  CBEXDJ_DateExpiredJulian1  
+                --                   ,  CBEXDJ_DateExpiredJulian1  
 
-                                   ,  CBCATN_CatalogName  
+                --                   ,  CBCATN_CatalogName  
 
-                        FROM  
+                --        FROM  
 
-                        (  
+                --        (  
 
-                                SELECT  CBAN8_AddressNumber  
+                --                SELECT  CBAN8_AddressNumber  
 
-                                           ,  CBITM_IdentifierShortItem  
+                --                           ,  CBITM_IdentifierShortItem  
 
-                                           ,  CBCATN_CatalogName  
+                --                           ,  CBCATN_CatalogName  
 
-                                           ,  CBPRRC_PurchasingUnitPrice  
+                --                           ,  CBPRRC_PurchasingUnitPrice  
 
-                                           ,  CBEFTJ_DateEffectiveJulian1  
+                --                           ,  CBEFTJ_DateEffectiveJulian1  
 
-                                           ,  CBEXDJ_DateExpiredJulian1  
+                --                           ,  CBEXDJ_DateExpiredJulian1  
 
-                                           ,  CBCRCD_CurrencyCodeFrom  
+                --                           ,  CBCRCD_CurrencyCodeFrom  
 
-                                           ,  ROW_NUMBER()  OVER  (PARTITION  BY  CBAN8_AddressNumber  
+                --                           ,  ROW_NUMBER()  OVER  (PARTITION  BY  CBAN8_AddressNumber  
 
-                                                                                                           ,  CBITM_IdentifierShortItem  
+                --                                                                                           ,  CBITM_IdentifierShortItem  
 
-                                                                                                           ,  CBCATN_CatalogName  
+                --                                                                                           ,  CBCATN_CatalogName  
 
-                                                                                    ORDER  BY  CBEFTJ_DateEffectiveJulian1  DESC  
+                --                                                                    ORDER  BY  CBEFTJ_DateEffectiveJulian1  DESC  
 
-                                                                                  )  AS  rn  
+                --                                                                  )  AS  rn  
 
-                                FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F41061]  
+                --                FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F41061]  
 
-                        )  AS  ranked  
+                --        )  AS  ranked  
 
-                        WHERE  rn  =  1  
+                --        WHERE  rn  =  1  
 
-                )                                                                                                                                                                F41061  
+                --)                                                                                                                                                                  
+
+                #F41061                                                                                                                                                    F41061  
 
                         ON  F4311.PDAN8_AddressNumber  =  F41061.CBAN8_AddressNumber  
 
@@ -486,51 +668,53 @@ BEGIN
 
                 LEFT  JOIN  
 
-                (  
+                --(  
 
-                        SELECT  MIN([OLPDDJ_ScheduledPickDate])  [OLPDDJ_ScheduledPickDate]  -- ,[OLUPMJ_DateUpdated]  
+                --        SELECT  MIN([OLPDDJ_ScheduledPickDate])  [OLPDDJ_ScheduledPickDate]  -- ,[OLUPMJ_DateUpdated]  
 
-                                   ,  [OLDOCO_DocumentOrderInvoiceE]  
+                --                   ,  [OLDOCO_DocumentOrderInvoiceE]  
 
-                                   ,  [OLDCTO_OrderType]  
+                --                   ,  [OLDCTO_OrderType]  
 
-                                   ,  [OLKCOO_CompanyKeyOrderNo]  
+                --                   ,  [OLKCOO_CompanyKeyOrderNo]  
 
-                                   ,  [OLLNID_LineNumber]  
+                --                   ,  [OLLNID_LineNumber]  
 
-                        FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F43199]  
+                --        FROM  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_F43199]  
 
-                        GROUP  BY  [OLDOCO_DocumentOrderInvoiceE]  
+                --        GROUP  BY  [OLDOCO_DocumentOrderInvoiceE]  
 
-                                       ,  [OLDCTO_OrderType]  
+                --                       ,  [OLDCTO_OrderType]  
 
-                                       ,  [OLKCOO_CompanyKeyOrderNo]  
+                --                       ,  [OLKCOO_CompanyKeyOrderNo]  
 
-                                       ,  [OLLNID_LineNumber]  
+                --                       ,  [OLLNID_LineNumber]  
 
-                )                                                                                                                                                                F43199  
+                --)                                                                                                                                                                  
 
-                        ON  F4311.[PDDOCO_DocumentOrderInvoiceE]  =  F43199.[OLDOCO_DocumentOrderInvoiceE]  
+                #SupplierFD                                                                                                                                            F43199  
 
-                              AND  F4311.[PDDCTO_OrderType]  =  F43199.[OLDCTO_OrderType]  
+                        ON  F4311.[PDDOCO_DocumentOrderInvoiceE]  =  F43199.DOCO  
 
-                              AND  F4311.[PDKCOO_CompanyKeyOrderNo]  =  F43199.[OLKCOO_CompanyKeyOrderNo]  
+                              AND  F4311.[PDDCTO_OrderType]  =  F43199.DCTO  
 
-                              AND  F4311.[PDLNID_LineNumber]  =  F43199.[OLLNID_LineNumber]  
+                              AND  F4311.[PDLNID_LineNumber]  =  F43199.LNID  
+
+                              AND  F4311.[PDMCU_CostCenter]  =  F43199.MCU  
 
                 LEFT  JOIN  [RDL00001_EnterpriseDataLanding].[JDE_BI_OPS].[V_V0101]                                V0101  
 
                         ON  F4311.PDANBY_BuyerNumber  =  V0101.[ABAN8_AddressNumber]  
 
-        WHERE  F4311.PDKCOO_CompanyKeyOrderNo  IN  (  '00001' ,  '00077' ,  '09011' ,  '09052' ,  '09041' ,  '00024'  )  
+        --WHERE  F4311.PDKCOO_CompanyKeyOrderNo  IN  (  '00001' ,  '00077' ,  '09011' ,  '09052' ,  '09041' ,  '00024'  )  
 
-                    AND  F4311.PDLNTY_LineType  in  (  'S' ,  'J' ,  'N' ,  'F' ,  'XX' ,  'ZZ' ,  'ND' ,  'SC' ,  'D'  )  
+        --            AND  F4311.PDLNTY_LineType  in  (  'S' ,  'J' ,  'N' ,  'F' ,  'XX' ,  'ZZ' ,  'ND' ,  'SC' ,  'D'  )  
 
-                    AND  F4311.PDDCTO_OrderType  in  (  'OP' ,  'ON'  )  
+        --            AND  F4311.PDDCTO_OrderType  in  (  'OP' ,  'ON'  )  
 
-                    AND  F4311.PDTORG_TransactionOriginator  not  in  (  'NEXONIAUPD'  )  
+        --            AND  F4311.PDTORG_TransactionOriginator  not  in  (  'NEXONIAUPD'  )  
 
-                    AND  F4311.PDTRDJ_DateTransactionJulian  >=  @BeginDate;  
+        --            AND  F4311.PDTRDJ_DateTransactionJulian  >=  @BeginDate;  
 
   
 
@@ -792,13 +976,13 @@ BEGIN
 
         EXEC  @IdentityAuditId  =  RDL00001_EnterpriseDataLanding.dbo.SYS_AUDIT_TRANSACTION  0  
 
-                                                                                                                                                                       ,  @Database  
+                                                                                                                                                     ,  @Database  
 
                                                                                                                                                                        ,  'F_PurchaseOrderLine'  
 
                                                                                                                                                                        ,  'U'  
 
-                                                                                                                 ,  'F'  
+                                                                                                                                                                       ,  'F'  
 
                                                                                                                                                                        ,  0  
 
@@ -1016,41 +1200,17 @@ BEGIN
 
                                                                                                                                                                        ,  'N';  
 
-        DROP  TABLE  IF  EXISTS  #LastInPastYears  
-
-        SELECT  [DRDL02_Description01002_new]  
-
-                   ,  [COMCU_CostCenter]  
-
-                   ,  [COITM_IdentifierShortItem]  
-
-                   ,  [COUNCS_AmountUnitCost]  
-
-        INTO  #LastInPastYears  
-
-        FROM  [RDL00001_EnterpriseDataStaging].[dbo].[F_ProductCost_Purchase]  
-
-        WHERE  [Cost_Type]  =  'StandardPastYears'  
-
         UPDATE  A  
 
-        SET  [LastInCost]  =  A.UnitPrice  
+                SET  [LastInCost]  =  A.UnitPrice  
 
         FROM  [RDL00001_EnterpriseDataStaging].[dbo].[F_PurchaseOrderLine]  A  
 
-                LEFT  JOIN  [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]  B  
+        LEFT  JOIN  [RDL00001_EnterpriseDataStaging].[Shared].[DimDate]  B  
 
-                        ON  A.OrderDate  =  B.[Date]  
+                ON  A.OrderDate  =  B.[Date]  
 
-                LEFT  JOIN  #LastInPastYears                                                                        as  Std  
-
-                        ON  B.[FiscalYear]  =  Std.DRDL02_Description01002_new  
-
-                              and  A.Branch  =  Std.COMCU_CostCenter  
-
-                              and  A.ItemNumber  =  Std.COITM_IdentifierShortItem  
-
-        WHERE  Std.COITM_IdentifierShortItem  IS  NOT  NULL  
+        WHERE  B.[FiscalYear]  IN  (  2020 ,  2021 ,  2022 ,  2023 ,  2024  )  
 
         SElECT  @RowCountAffected  =  @@ROWCOUNT  
 
@@ -1074,7 +1234,7 @@ BEGIN
 
                                                                                                                                  ,  0  
 
-                                                                                                                                 ,  'Y'  
+                     ,  'Y'  
 
   
 

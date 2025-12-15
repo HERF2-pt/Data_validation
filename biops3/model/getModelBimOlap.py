@@ -13,7 +13,8 @@ clr.AddReference(r"C:\Program Files (x86)\Microsoft SQL Server\130\SDK\Assemblie
 from Microsoft.AnalysisServices.Tabular import Server, JsonScripter
 
 server_name = r"NADWOLAP1A"  # add \InstanceName if named
-database_name = r"RDL00002_99011_GL_Transactions"
+# database_name = r"RDL00002_99011_GL_Transactions"
+database_name = r"RDL00001_Procurement"
 
 
 srv = Server()
@@ -72,3 +73,11 @@ srv.Disconnect()
 
 # file: run_export.py
 
+from ssas_tabular_export import export_tabular_model_metadata
+
+path = export_tabular_model_metadata(
+    server_name=r"NADWOLAP1A",  # or r"NADWOLAP1A\InstanceName"
+    database_name=r"RDL00002_99011_GL_Transactions",
+    # output_path=r"C:\temp\RDL00002_99011_GL_Transactions_modelBim.json",  # optional
+)
+print(f"Saved model metadata to: {path}")

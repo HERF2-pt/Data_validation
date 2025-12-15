@@ -1,0 +1,2492 @@
+{
+  "name": "RDL00002_99011_GL_Transactions",
+  "id": "RDL00002_99011_GL_Transactions",
+  "compatibilityLevel": 1500,
+  "model": {
+    "name": "RDL00002_99011_GL_Transactions",
+    "culture": "en-US",
+    "dataSources": [
+      {
+        "name": "RDL00002_99011_Datawarehouse",
+        "connectionString": "Provider=SQLOLEDB.1;Data Source=db02dw99011pd.premiertech.com;Persist Security Info=True;User ID=RDL00002_99011_Datawarehouse_o;Initial Catalog=RDL00002_99011_Datawarehouse",
+        "impersonationMode": "impersonateServiceAccount",
+        "annotations": [
+          {
+            "name": "ConnectionEditUISource",
+            "value": "SqlServer"
+          }
+        ]
+      }
+    ],
+    "tables": [
+      {
+        "name": "Accounts",
+        "columns": [
+          {
+            "name": "ACCOUNT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ACCOUNT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "ACCOUNT_INTERNAL_ID",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "ACCOUNT_INTERNAL_ID",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Account Code",
+            "dataType": "string",
+            "sourceColumn": "ACCOUNT_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Account Name",
+            "dataType": "string",
+            "sourceColumn": "ACCOUNT_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Subsidiary Code",
+            "dataType": "string",
+            "sourceColumn": "SUBSIDIARY_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Management Info Code",
+            "dataType": "string",
+            "sourceColumn": "MGT_INFO_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Management Info Name",
+            "dataType": "string",
+            "sourceColumn": "MGT_INFO_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Departement Code",
+            "dataType": "string",
+            "sourceColumn": "DEPARTMENT_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Department Name",
+            "dataType": "string",
+            "sourceColumn": "DEPARTMENT_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Financial Statement Line Name",
+            "dataType": "string",
+            "sourceColumn": "FS_LINE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Account Type",
+            "dataType": "string",
+            "sourceColumn": "ACCOUNT_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 22 Code",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY22_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 22 Name",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY22_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 23 Code",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY23_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 23 Name",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY23_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 24 Code",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY24_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Category 24 Name",
+            "dataType": "string",
+            "sourceColumn": "CATEGORY24_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "LOAD_START_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_START_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "LOAD_END_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_END_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "CURRENT_IND",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_IND",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Accounts",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": " SELECT [dbo].[D_ACCOUNTS].* FROM [dbo].[D_ACCOUNTS] "
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": " SELECT [dbo].[D_ACCOUNTS].* FROM [dbo].[D_ACCOUNTS] "
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_ACCOUNTS"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          }
+        ]
+      },
+      {
+        "name": "Address Books",
+        "columns": [
+          {
+            "name": "ADDRESSBOOK_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ADDRESSBOOK_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "Address Book #",
+            "dataType": "string",
+            "sourceColumn": "ADDRESSBOOK_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Name",
+            "dataType": "string",
+            "sourceColumn": "NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Address",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "ADDRESS",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Postal Code",
+            "dataType": "string",
+            "sourceColumn": "POSTAL_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "City Name",
+            "dataType": "string",
+            "sourceColumn": "CITY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Region Code",
+            "dataType": "string",
+            "sourceColumn": "REGION_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Region Name",
+            "dataType": "string",
+            "sourceColumn": "REGION_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "County Name",
+            "dataType": "string",
+            "sourceColumn": "COUNTY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "State Code",
+            "dataType": "string",
+            "sourceColumn": "STATE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "State Name",
+            "dataType": "string",
+            "sourceColumn": "STATE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Country Code",
+            "dataType": "string",
+            "sourceColumn": "COUNTRY_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Country Name",
+            "dataType": "string",
+            "sourceColumn": "COUNTRY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "LOAD_START_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_START_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "LOAD_END_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_END_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "CURRENT_IND",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_IND",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          },
+          {
+            "type": "calculated",
+            "name": "Interco",
+            "dataType": "boolean",
+            "isDataTypeInferred": true,
+            "expression": "IF(IFERROR(VALUE('Address Books'[Address Book #]),0) < 100000, TRUE, FALSE)",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Address Books",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": " SELECT [dbo].[D_ADDRESSBOOKS].* FROM [dbo].[D_ADDRESSBOOKS] "
+            },
+            "annotations": [
+              {
+                "name": "TableWidgetSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"TableWidgetSerialization\"><AnnotationContent><![CDATA[<?xml version=\"1.0\"?>",
+                  "<TableWidgetGridSerialization xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">",
+                  "  <ColumnSuggestedType />",
+                  "  <ColumnFormat />",
+                  "  <ColumnAccuracy />",
+                  "  <ColumnCurrencySymbol />",
+                  "  <ColumnPositivePattern />",
+                  "  <ColumnNegativePattern />",
+                  "  <ColumnWidths>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESSBOOK_ID</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>121</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESSBOOK_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>138</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>58</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESS</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>76</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>POSTAL_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>102</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>CITY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>87</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>REGION_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>103</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>REGION_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>103</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>105</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>STATE_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>95</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>STATE_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>95</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTRY_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>112</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTRY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>112</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>LOAD_START_DATE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>127</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>LOAD_END_DATE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>115</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>CURRENT_IND</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>101</int>",
+                  "      </value>",
+                  "    </item>",
+                  "  </ColumnWidths>",
+                  "  <ColumnDisplayIndex>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESSBOOK_ID</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>0</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESSBOOK_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>1</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>2</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>ADDRESS</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>3</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>POSTAL_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>4</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>CITY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>5</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>REGION_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>6</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>REGION_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>7</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>8</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>STATE_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>9</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>STATE_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>10</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTRY_CODE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>11</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>COUNTRY_NAME</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>12</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>LOAD_START_DATE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>13</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>LOAD_END_DATE</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>14</int>",
+                  "      </value>",
+                  "    </item>",
+                  "    <item>",
+                  "      <key>",
+                  "        <string>CURRENT_IND</string>",
+                  "      </key>",
+                  "      <value>",
+                  "        <int>15</int>",
+                  "      </value>",
+                  "    </item>",
+                  "  </ColumnDisplayIndex>",
+                  "  <ColumnFrozen />",
+                  "  <ColumnChecked />",
+                  "  <ColumnFilter />",
+                  "  <SelectionFilter />",
+                  "  <FilterParameters />",
+                  "  <IsSortDescending>false</IsSortDescending>",
+                  "</TableWidgetGridSerialization>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": " SELECT [dbo].[D_ADDRESSBOOKS].* FROM [dbo].[D_ADDRESSBOOKS] "
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_ADDRESSBOOKS"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          },
+          {
+            "name": "TableWidgetSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"TableWidgetSerialization\"><AnnotationContent><![CDATA[<?xml version=\"1.0\"?>",
+              "<TableWidgetGridSerialization xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">",
+              "  <ColumnSuggestedType />",
+              "  <ColumnFormat />",
+              "  <ColumnAccuracy />",
+              "  <ColumnCurrencySymbol />",
+              "  <ColumnPositivePattern />",
+              "  <ColumnNegativePattern />",
+              "  <ColumnWidths>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESSBOOK_ID</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>121</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESSBOOK_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>138</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>58</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESS</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>76</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>POSTAL_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>102</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>CITY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>87</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>REGION_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>103</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>REGION_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>103</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>105</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>STATE_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>95</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>STATE_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>95</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTRY_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>112</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTRY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>112</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>LOAD_START_DATE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>127</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>LOAD_END_DATE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>115</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>CURRENT_IND</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>101</int>",
+              "      </value>",
+              "    </item>",
+              "  </ColumnWidths>",
+              "  <ColumnDisplayIndex>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESSBOOK_ID</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>0</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESSBOOK_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>1</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>2</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>ADDRESS</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>3</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>POSTAL_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>4</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>CITY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>5</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>REGION_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>6</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>REGION_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>7</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>8</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>STATE_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>9</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>STATE_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>10</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTRY_CODE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>11</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>COUNTRY_NAME</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>12</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>LOAD_START_DATE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>13</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>LOAD_END_DATE</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>14</int>",
+              "      </value>",
+              "    </item>",
+              "    <item>",
+              "      <key>",
+              "        <string>CURRENT_IND</string>",
+              "      </key>",
+              "      <value>",
+              "        <int>15</int>",
+              "      </value>",
+              "    </item>",
+              "  </ColumnDisplayIndex>",
+              "  <ColumnFrozen />",
+              "  <ColumnChecked />",
+              "  <ColumnFilter />",
+              "  <SelectionFilter />",
+              "  <FilterParameters />",
+              "  <IsSortDescending>false</IsSortDescending>",
+              "</TableWidgetGridSerialization>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Business Structure",
+        "columns": [
+          {
+            "name": "BUSINESSSTRUCTURE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "BUSINESSSTRUCTURE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "Business Structure Group Code",
+            "dataType": "string",
+            "sourceColumn": "BUSINESSSTRUCTURE_GROUP_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Business Unit Code",
+            "dataType": "string",
+            "sourceColumn": "BUSINESS_UNIT_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Business Unit Name",
+            "dataType": "string",
+            "sourceColumn": "BUSINESS_UNIT_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Company Code",
+            "dataType": "string",
+            "sourceColumn": "COMPANY_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Company Name",
+            "dataType": "string",
+            "sourceColumn": "COMPANY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Cost Center Code",
+            "dataType": "string",
+            "sourceColumn": "COST_CENTER_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Cost Center Name",
+            "dataType": "string",
+            "sourceColumn": "COST_CENTER_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Business Center Code",
+            "dataType": "string",
+            "sourceColumn": "BUSINESS_CENTER_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Business Center Name",
+            "dataType": "string",
+            "sourceColumn": "BUSINESS_CENTER_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Country Name",
+            "dataType": "string",
+            "sourceColumn": "COUNTRY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Continent Name",
+            "dataType": "string",
+            "sourceColumn": "CONTINENT_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "LOAD_START_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_START_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "LOAD_END_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_END_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "CURRENT_IND",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_IND",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Business Structure",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": " SELECT [dbo].[D_BUSINESSSTRUCTURE].* FROM [dbo].[D_BUSINESSSTRUCTURE] "
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": " SELECT [dbo].[D_BUSINESSSTRUCTURE].* FROM [dbo].[D_BUSINESSSTRUCTURE] "
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_BUSINESSSTRUCTURE"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          }
+        ]
+      },
+      {
+        "name": "Dates",
+        "columns": [
+          {
+            "name": "DATE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "DATE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "DATE_CODE",
+            "formatString": "Short Date",
+            "sourceProviderType": "DBDate",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+              }
+            ]
+          },
+          {
+            "name": "Year (Fiscal)",
+            "dataType": "int64",
+            "sourceColumn": "EU_FISCAL_YR",
+            "sourceProviderType": "SmallInt"
+          },
+          {
+            "name": "EU_FISCAL_YR_DAY_POSITION",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_YR_DAY_POSITION",
+            "sourceProviderType": "SmallInt"
+          },
+          {
+            "name": "Year Description (Fiscal)",
+            "dataType": "string",
+            "sourceColumn": "EU_FISCAL_YR_DESC",
+            "sourceProviderType": "Char"
+          },
+          {
+            "name": "Month # (Fiscal)",
+            "dataType": "int64",
+            "sourceColumn": "EU_FISCAL_MONTH_NUM",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "EU_FISCAL_MONTH_WEEK_POSITION",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_MONTH_WEEK_POSITION",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "EU_FISCAL_MONTH_DAY_POSITION",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_MONTH_DAY_POSITION",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "Week # (Fiscal)",
+            "dataType": "int64",
+            "sourceColumn": "EU_FISCAL_WEEK_NUM",
+            "formatString": "0",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "EU_FISCAL_WEEK_DAY_POSITION",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_WEEK_DAY_POSITION",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "EU_FISCAL_QTR_NUM",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_QTR_NUM",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "EU_FISCAL_QTR_DAY_POSITION",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_QTR_DAY_POSITION",
+            "sourceProviderType": "UnsignedTinyInt"
+          },
+          {
+            "name": "CURRENT_FLAG",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_FLAG",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          },
+          {
+            "name": "Month Description (Fiscal)",
+            "dataType": "string",
+            "sourceColumn": "EU_FISCAL_MONTH_DESC_FR"
+          },
+          {
+            "name": "Week Description (Fiscal)",
+            "dataType": "string",
+            "sourceColumn": "EU_FISCAL_WEEK_DESC_FR"
+          },
+          {
+            "name": "EU_FISCAL_QTR_DESC_FR",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "EU_FISCAL_QTR_DESC_FR"
+          },
+          {
+            "type": "calculated",
+            "name": "Week_Num(Fiscal)",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": " FORMAT(Dates[Week # (Fiscal)], \"00\")"
+          },
+          {
+            "type": "calculated",
+            "name": "Date_Formatted",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": " FORMAT([Date], \"yyyy-mm-dd\")"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Dates",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": [
+                "SELECT\tDATE_ID, ",
+                "\tisNull(DATE_CODE, '1900-01-01') as DATE_CODE,",
+                "\tEU_FISCAL_YR, ",
+                "\tEU_FISCAL_YR_DAY_POSITION, ",
+                "\tEU_FISCAL_YR_DESC, ",
+                "\tEU_FISCAL_MONTH_NUM, ",
+                "\tEU_FISCAL_MONTH_WEEK_POSITION, ",
+                "\tEU_FISCAL_MONTH_DAY_POSITION, ",
+                "\tEU_FISCAL_MONTH_DESC_FR, ",
+                "\tEU_FISCAL_WEEK_NUM, ",
+                "\tEU_FISCAL_WEEK_DESC_FR, ",
+                "\tEU_FISCAL_WEEK_DAY_POSITION, ",
+                "\tEU_FISCAL_QTR_NUM, ",
+                "\tEU_FISCAL_QTR_DAY_POSITION, ",
+                "\tEU_FISCAL_QTR_DESC_FR, ",
+                "\tCURRENT_FLAG",
+                "FROM dbo.D_DATES",
+                "WHERE\tDATE_ID >= (SELECT MIN(DATE_ID) FROM dbo.F_GL_TRANSACTIONS) and",
+                "\tEU_FISCAL_ADJ_YR <= (SELECT EU_FISCAL_YR+1 FROM dbo.D_DATES WHERE DATE_CODE = CAST(GETDATE() as DATE))"
+              ]
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT\tDATE_ID, ",
+                  "\tisNull(DATE_CODE, '1900-01-01') as DATE_CODE,",
+                  "\tEU_FISCAL_YR, ",
+                  "\tEU_FISCAL_YR_DAY_POSITION, ",
+                  "\tEU_FISCAL_YR_DESC, ",
+                  "\tEU_FISCAL_MONTH_NUM, ",
+                  "\tEU_FISCAL_MONTH_WEEK_POSITION, ",
+                  "\tEU_FISCAL_MONTH_DAY_POSITION, ",
+                  "\tEU_FISCAL_MONTH_DESC_FR, ",
+                  "\tEU_FISCAL_WEEK_NUM, ",
+                  "\tEU_FISCAL_WEEK_DESC_FR, ",
+                  "\tEU_FISCAL_WEEK_DAY_POSITION, ",
+                  "\tEU_FISCAL_QTR_NUM, ",
+                  "\tEU_FISCAL_QTR_DAY_POSITION, ",
+                  "\tEU_FISCAL_QTR_DESC_FR, ",
+                  "\tCURRENT_FLAG",
+                  "FROM dbo.D_DATES",
+                  "WHERE\tDATE_ID >= (SELECT MIN(DATE_ID) FROM dbo.F_GL_TRANSACTIONS) and",
+                  "\tEU_FISCAL_ADJ_YR <= (SELECT EU_FISCAL_YR+1 FROM dbo.D_DATES WHERE DATE_CODE = CAST(GETDATE() as DATE))</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT\tDATE_ID, ",
+              "\tisNull(DATE_CODE, '1900-01-01') as DATE_CODE,",
+              "\tEU_FISCAL_YR, ",
+              "\tEU_FISCAL_YR_DAY_POSITION, ",
+              "\tEU_FISCAL_YR_DESC, ",
+              "\tEU_FISCAL_MONTH_NUM, ",
+              "\tEU_FISCAL_MONTH_WEEK_POSITION, ",
+              "\tEU_FISCAL_MONTH_DAY_POSITION, ",
+              "\tEU_FISCAL_MONTH_DESC_FR, ",
+              "\tEU_FISCAL_WEEK_NUM, ",
+              "\tEU_FISCAL_WEEK_DESC_FR, ",
+              "\tEU_FISCAL_WEEK_DAY_POSITION, ",
+              "\tEU_FISCAL_QTR_NUM, ",
+              "\tEU_FISCAL_QTR_DAY_POSITION, ",
+              "\tEU_FISCAL_QTR_DESC_FR, ",
+              "\tCURRENT_FLAG",
+              "FROM dbo.D_DATES",
+              "WHERE\tDATE_ID >= (SELECT MIN(DATE_ID) FROM dbo.F_GL_TRANSACTIONS) and",
+              "\tEU_FISCAL_ADJ_YR <= (SELECT EU_FISCAL_YR+1 FROM dbo.D_DATES WHERE DATE_CODE = CAST(GETDATE() as DATE))"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_DATES"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT\tDATE_ID, ",
+              "\tisNull(DATE_CODE, '1900-01-01') as DATE_CODE,",
+              "\tEU_FISCAL_YR, ",
+              "\tEU_FISCAL_YR_DAY_POSITION, ",
+              "\tEU_FISCAL_YR_DESC, ",
+              "\tEU_FISCAL_MONTH_NUM, ",
+              "\tEU_FISCAL_MONTH_WEEK_POSITION, ",
+              "\tEU_FISCAL_MONTH_DAY_POSITION, ",
+              "\tEU_FISCAL_MONTH_DESC_FR, ",
+              "\tEU_FISCAL_WEEK_NUM, ",
+              "\tEU_FISCAL_WEEK_DESC_FR, ",
+              "\tEU_FISCAL_WEEK_DAY_POSITION, ",
+              "\tEU_FISCAL_QTR_NUM, ",
+              "\tEU_FISCAL_QTR_DAY_POSITION, ",
+              "\tEU_FISCAL_QTR_DESC_FR, ",
+              "\tCURRENT_FLAG",
+              "FROM dbo.D_DATES",
+              "WHERE\tDATE_ID >= (SELECT MIN(DATE_ID) FROM dbo.F_GL_TRANSACTIONS) and",
+              "\tEU_FISCAL_ADJ_YR <= (SELECT EU_FISCAL_YR+1 FROM dbo.D_DATES WHERE DATE_CODE = CAST(GETDATE() as DATE))</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Documents",
+        "columns": [
+          {
+            "name": "GL_DOCUMENT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "GL_DOCUMENT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "Document Company",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_COMPANY",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Document Type Code",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Document Type Name",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Document #",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_NUMBER",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Ledger Type",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_LEDGER_TYPE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Line1 Description",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_LINE1_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Line2 Description",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_LINE2_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Reference Line1 Description",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_REFERENCE_LINE1_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Reference Line2 Description",
+            "dataType": "string",
+            "sourceColumn": "DOCUMENT_REFERENCE_LINE2_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Line #",
+            "dataType": "double",
+            "sourceColumn": "LINE_NUMBER",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "name": "Line Extension Code",
+            "dataType": "string",
+            "sourceColumn": "LINE_EXTENSION_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Subledger Code",
+            "dataType": "string",
+            "sourceColumn": "SUBLEDGER_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Subledger Description",
+            "dataType": "string",
+            "sourceColumn": "SUBLEDGER_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Subledger Type",
+            "dataType": "string",
+            "sourceColumn": "SUBLEDGER_TYPE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Document Date",
+            "dataType": "dateTime",
+            "sourceColumn": "DOCUMENT_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "Batch Number",
+            "dataType": "int64",
+            "sourceColumn": "BATCH_NUMBER",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "Batch Date",
+            "dataType": "dateTime",
+            "sourceColumn": "BATCH_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "Invoice Date",
+            "dataType": "dateTime",
+            "sourceColumn": "INVOICE_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "Serial #",
+            "dataType": "string",
+            "sourceColumn": "SERIAL_NUMBER",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Purchase Order #",
+            "dataType": "string",
+            "sourceColumn": "PURCHASE_ORDER_NUMBER",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Invoice #",
+            "dataType": "string",
+            "sourceColumn": "INVOICE_NUMBER",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Transaction Originator",
+            "dataType": "string",
+            "sourceColumn": "TRANSACTION_ORIGINATOR",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Project Type",
+            "dataType": "string",
+            "sourceColumn": "PROJECT_TYPE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Exchange Rate",
+            "dataType": "double",
+            "sourceColumn": "EXCHANGE_RATE",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "name": "LOAD_START_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_START_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "LOAD_END_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_END_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "CURRENT_IND",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_IND",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          },
+          {
+            "type": "calculated",
+            "name": "Entry Civil Month",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": " MONTH([Batch Date])"
+          },
+          {
+            "type": "calculated",
+            "name": "Entry Civil Year",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": " YEAR([Batch Date])"
+          },
+          {
+            "name": "Cost Object",
+            "dataType": "string",
+            "sourceColumn": "COST_OBJECT"
+          },
+          {
+            "name": "Cost Object Description",
+            "dataType": "string",
+            "sourceColumn": "COST_OBJET_DESCRIPTION"
+          },
+          {
+            "name": "Customer PO",
+            "dataType": "string",
+            "sourceColumn": "CUSTOMER_PO"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Documents",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": "SELECT [dbo].[D_GL_DOCUMENTS].* FROM [dbo].[D_GL_DOCUMENTS]"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[D_GL_DOCUMENTS].* FROM [dbo].[D_GL_DOCUMENTS]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": "SELECT [dbo].[D_GL_DOCUMENTS].* FROM [dbo].[D_GL_DOCUMENTS]"
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_GL_DOCUMENTS"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[D_GL_DOCUMENTS].* FROM [dbo].[D_GL_DOCUMENTS]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+          }
+        ]
+      },
+      {
+        "name": "Products",
+        "columns": [
+          {
+            "name": "PRODUCT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "PRODUCT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "PRODUCT_INTERNAL_CODE",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "PRODUCT_INTERNAL_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Product Code",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "PRODUCT_CATALOG_CODE",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "PRODUCT_CATALOG_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "PRODUCT_CATALOG_CODE2",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "PRODUCT_CATALOG_CODE2",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Product Name",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Product Description",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family1 Code",
+            "dataType": "string",
+            "sourceColumn": "FAMILY1_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family1 Name",
+            "dataType": "string",
+            "sourceColumn": "FAMILY1_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family2 Code",
+            "dataType": "string",
+            "sourceColumn": "FAMILY2_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family2 Name",
+            "dataType": "string",
+            "sourceColumn": "FAMILY2_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family3 Code",
+            "dataType": "string",
+            "sourceColumn": "FAMILY3_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family3 Name",
+            "dataType": "string",
+            "sourceColumn": "FAMILY3_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family4 Code",
+            "dataType": "string",
+            "sourceColumn": "FAMILY4_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Family4 Name",
+            "dataType": "string",
+            "sourceColumn": "FAMILY4_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "MANUFACTURING_TYPE_CODE",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "MANUFACTURING_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "MANUFACTURING_TYPE_NAME",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "MANUFACTURING_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Stocking Type Code",
+            "dataType": "string",
+            "sourceColumn": "STOCKING_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Stocking Type Description",
+            "dataType": "string",
+            "sourceColumn": "STOCKING_TYPE_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "UoM Code",
+            "dataType": "string",
+            "sourceColumn": "UOM_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "UoM Description",
+            "dataType": "string",
+            "sourceColumn": "UOM_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Line Type Code",
+            "dataType": "string",
+            "sourceColumn": "LINE_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Line Type Description",
+            "dataType": "string",
+            "sourceColumn": "LINE_TYPE_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "LOAD_START_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_START_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "LOAD_END_DATE",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "sourceColumn": "LOAD_END_DATE",
+            "formatString": "General Date",
+            "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "CURRENT_IND",
+            "dataType": "boolean",
+            "isHidden": true,
+            "sourceColumn": "CURRENT_IND",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "sourceProviderType": "Boolean"
+          },
+          {
+            "name": "SEARCH_TEXT",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "SEARCH_TEXT",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Capacity Code",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_CAPACITY_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Capacity Name",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_CAPACITY_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Product Range Code",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_RANGE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Product Range Name",
+            "dataType": "string",
+            "sourceColumn": "PRODUCT_RANGE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Raw Material Type Code",
+            "dataType": "string",
+            "sourceColumn": "RAW_MATERIAL_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Raw Material Type Name",
+            "dataType": "string",
+            "sourceColumn": "RAW_MATERIAL_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Pack Line Type Code",
+            "dataType": "string",
+            "sourceColumn": "PACK_LINE_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Pack Line Type Name",
+            "dataType": "string",
+            "sourceColumn": "PACK_LINE_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Exit Type Code",
+            "dataType": "string",
+            "sourceColumn": "EXIT_TYPE_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Exit Type Name",
+            "dataType": "string",
+            "sourceColumn": "EXIT_TYPE_NAME",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "GL Class Code",
+            "dataType": "string",
+            "sourceColumn": "GL_CLASS_CODE",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "GL Class Description",
+            "dataType": "string",
+            "sourceColumn": "GL_CLASS_DESC",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "Market Sector",
+            "dataType": "string",
+            "sourceColumn": "MARKET_SECTOR"
+          },
+          {
+            "name": "E_COMMERCE_CODE",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "E_COMMERCE_CODE"
+          },
+          {
+            "name": "E-Commerce Category",
+            "dataType": "string",
+            "sourceColumn": "E_COMMERCE_NAME"
+          },
+          {
+            "type": "calculated",
+            "name": "ProdCodeNameDesc",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "[Product Code] & \"-\" & [Product Name] & \"-\" & [Product Description]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Products",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": [
+                "SELECT [dbo].[D_PRODUCTS].[PRODUCT_ID],[dbo].[D_PRODUCTS].[PRODUCT_INTERNAL_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE2],[dbo].[D_PRODUCTS].[PRODUCT_NAME],[dbo].[D_PRODUCTS].[PRODUCT_DESC],[dbo].[D_PRODUCTS].[FAMILY1_CODE],[dbo].[D_PRODUCTS].[FAMILY1_NAME],[dbo].[D_PRODUCTS].[FAMILY2_CODE],[dbo].[D_PRODUCTS].[FAMILY2_NAME],[dbo].[D_PRODUCTS].[FAMILY3_CODE],[dbo].[D_PRODUCTS].[FAMILY3_NAME],[dbo].[D_PRODUCTS].[FAMILY4_CODE],[dbo].[D_PRODUCTS].[FAMILY4_NAME],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_NAME],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_CODE],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_NAME],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_CODE],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_NAME],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_NAME],[dbo].[D_PRODUCTS].[EXIT_TYPE_CODE],[dbo].[D_PRODUCTS].[EXIT_TYPE_NAME],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_CODE],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_NAME],[dbo].[D_PRODUCTS].[STOCKING_TYPE_CODE],[dbo].[D_PRODUCTS].[STOCKING_TYPE_DESC],[dbo].[D_PRODUCTS].[GL_CLASS_CODE],[dbo].[D_PRODUCTS].[GL_CLASS_DESC],[dbo].[D_PRODUCTS].[UOM_CODE],[dbo].[D_PRODUCTS].[UOM_DESC],[dbo].[D_PRODUCTS].[LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[LINE_TYPE_DESC],[dbo].[D_PRODUCTS].[LOAD_START_DATE],[dbo].[D_PRODUCTS].[LOAD_END_DATE],[dbo].[D_PRODUCTS].[CURRENT_IND],[dbo].[D_PRODUCTS].[SEARCH_TEXT],[dbo].[D_PRODUCTS].[MARKET_SECTOR],[dbo].[D_PRODUCTS].[E_COMMERCE_CODE],[dbo].[D_PRODUCTS].[E_COMMERCE_NAME]",
+                "",
+                "FROM [dbo].[D_PRODUCTS]"
+              ]
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[D_PRODUCTS].[PRODUCT_ID],[dbo].[D_PRODUCTS].[PRODUCT_INTERNAL_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE2],[dbo].[D_PRODUCTS].[PRODUCT_NAME],[dbo].[D_PRODUCTS].[PRODUCT_DESC],[dbo].[D_PRODUCTS].[FAMILY1_CODE],[dbo].[D_PRODUCTS].[FAMILY1_NAME],[dbo].[D_PRODUCTS].[FAMILY2_CODE],[dbo].[D_PRODUCTS].[FAMILY2_NAME],[dbo].[D_PRODUCTS].[FAMILY3_CODE],[dbo].[D_PRODUCTS].[FAMILY3_NAME],[dbo].[D_PRODUCTS].[FAMILY4_CODE],[dbo].[D_PRODUCTS].[FAMILY4_NAME],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_NAME],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_CODE],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_NAME],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_CODE],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_NAME],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_NAME],[dbo].[D_PRODUCTS].[EXIT_TYPE_CODE],[dbo].[D_PRODUCTS].[EXIT_TYPE_NAME],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_CODE],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_NAME],[dbo].[D_PRODUCTS].[STOCKING_TYPE_CODE],[dbo].[D_PRODUCTS].[STOCKING_TYPE_DESC],[dbo].[D_PRODUCTS].[GL_CLASS_CODE],[dbo].[D_PRODUCTS].[GL_CLASS_DESC],[dbo].[D_PRODUCTS].[UOM_CODE],[dbo].[D_PRODUCTS].[UOM_DESC],[dbo].[D_PRODUCTS].[LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[LINE_TYPE_DESC],[dbo].[D_PRODUCTS].[LOAD_START_DATE],[dbo].[D_PRODUCTS].[LOAD_END_DATE],[dbo].[D_PRODUCTS].[CURRENT_IND],[dbo].[D_PRODUCTS].[SEARCH_TEXT],[dbo].[D_PRODUCTS].[MARKET_SECTOR],[dbo].[D_PRODUCTS].[E_COMMERCE_CODE],[dbo].[D_PRODUCTS].[E_COMMERCE_NAME]",
+                  "",
+                  "FROM [dbo].[D_PRODUCTS]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT [dbo].[D_PRODUCTS].[PRODUCT_ID],[dbo].[D_PRODUCTS].[PRODUCT_INTERNAL_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE2],[dbo].[D_PRODUCTS].[PRODUCT_NAME],[dbo].[D_PRODUCTS].[PRODUCT_DESC],[dbo].[D_PRODUCTS].[FAMILY1_CODE],[dbo].[D_PRODUCTS].[FAMILY1_NAME],[dbo].[D_PRODUCTS].[FAMILY2_CODE],[dbo].[D_PRODUCTS].[FAMILY2_NAME],[dbo].[D_PRODUCTS].[FAMILY3_CODE],[dbo].[D_PRODUCTS].[FAMILY3_NAME],[dbo].[D_PRODUCTS].[FAMILY4_CODE],[dbo].[D_PRODUCTS].[FAMILY4_NAME],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_NAME],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_CODE],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_NAME],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_CODE],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_NAME],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_NAME],[dbo].[D_PRODUCTS].[EXIT_TYPE_CODE],[dbo].[D_PRODUCTS].[EXIT_TYPE_NAME],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_CODE],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_NAME],[dbo].[D_PRODUCTS].[STOCKING_TYPE_CODE],[dbo].[D_PRODUCTS].[STOCKING_TYPE_DESC],[dbo].[D_PRODUCTS].[GL_CLASS_CODE],[dbo].[D_PRODUCTS].[GL_CLASS_DESC],[dbo].[D_PRODUCTS].[UOM_CODE],[dbo].[D_PRODUCTS].[UOM_DESC],[dbo].[D_PRODUCTS].[LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[LINE_TYPE_DESC],[dbo].[D_PRODUCTS].[LOAD_START_DATE],[dbo].[D_PRODUCTS].[LOAD_END_DATE],[dbo].[D_PRODUCTS].[CURRENT_IND],[dbo].[D_PRODUCTS].[SEARCH_TEXT],[dbo].[D_PRODUCTS].[MARKET_SECTOR],[dbo].[D_PRODUCTS].[E_COMMERCE_CODE],[dbo].[D_PRODUCTS].[E_COMMERCE_NAME]",
+              "",
+              "FROM [dbo].[D_PRODUCTS]"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "D_PRODUCTS"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[D_PRODUCTS].[PRODUCT_ID],[dbo].[D_PRODUCTS].[PRODUCT_INTERNAL_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CATALOG_CODE2],[dbo].[D_PRODUCTS].[PRODUCT_NAME],[dbo].[D_PRODUCTS].[PRODUCT_DESC],[dbo].[D_PRODUCTS].[FAMILY1_CODE],[dbo].[D_PRODUCTS].[FAMILY1_NAME],[dbo].[D_PRODUCTS].[FAMILY2_CODE],[dbo].[D_PRODUCTS].[FAMILY2_NAME],[dbo].[D_PRODUCTS].[FAMILY3_CODE],[dbo].[D_PRODUCTS].[FAMILY3_NAME],[dbo].[D_PRODUCTS].[FAMILY4_CODE],[dbo].[D_PRODUCTS].[FAMILY4_NAME],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_CODE],[dbo].[D_PRODUCTS].[PRODUCT_CAPACITY_NAME],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_CODE],[dbo].[D_PRODUCTS].[PRODUCT_RANGE_NAME],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_CODE],[dbo].[D_PRODUCTS].[RAW_MATERIAL_TYPE_NAME],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[PACK_LINE_TYPE_NAME],[dbo].[D_PRODUCTS].[EXIT_TYPE_CODE],[dbo].[D_PRODUCTS].[EXIT_TYPE_NAME],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_CODE],[dbo].[D_PRODUCTS].[MANUFACTURING_TYPE_NAME],[dbo].[D_PRODUCTS].[STOCKING_TYPE_CODE],[dbo].[D_PRODUCTS].[STOCKING_TYPE_DESC],[dbo].[D_PRODUCTS].[GL_CLASS_CODE],[dbo].[D_PRODUCTS].[GL_CLASS_DESC],[dbo].[D_PRODUCTS].[UOM_CODE],[dbo].[D_PRODUCTS].[UOM_DESC],[dbo].[D_PRODUCTS].[LINE_TYPE_CODE],[dbo].[D_PRODUCTS].[LINE_TYPE_DESC],[dbo].[D_PRODUCTS].[LOAD_START_DATE],[dbo].[D_PRODUCTS].[LOAD_END_DATE],[dbo].[D_PRODUCTS].[CURRENT_IND],[dbo].[D_PRODUCTS].[SEARCH_TEXT],[dbo].[D_PRODUCTS].[MARKET_SECTOR],[dbo].[D_PRODUCTS].[E_COMMERCE_CODE],[dbo].[D_PRODUCTS].[E_COMMERCE_NAME]",
+              "",
+              "FROM [dbo].[D_PRODUCTS]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Account Balances",
+        "isHidden": true,
+        "columns": [
+          {
+            "name": "DATE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "DATE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "ACCOUNT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ACCOUNT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "OPENING_BALANCE_EUR",
+            "dataType": "double",
+            "sourceColumn": "OPENING_BALANCE_EUR",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "name": "TOTAL_TRANSACTION_EUR",
+            "dataType": "double",
+            "isHidden": true,
+            "sourceColumn": "TOTAL_TRANSACTION_EUR",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "name": "CLOSING_BALANCE_EUR",
+            "dataType": "double",
+            "sourceColumn": "CLOSING_BALANCE_EUR",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "name": "BUSINESSSTRUCTURE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "BUSINESSSTRUCTURE_ID"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Account Balances",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": "SELECT [dbo].[F_GL_BALANCES].[DATE_ID],[dbo].[F_GL_BALANCES].[ACCOUNT_ID],[dbo].[F_GL_BALANCES].[OPENING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[TOTAL_TRANSACTION_EUR],[dbo].[F_GL_BALANCES].[CLOSING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[BUSINESSSTRUCTURE_ID]  FROM [dbo].[F_GL_BALANCES]"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[F_GL_BALANCES].[DATE_ID],[dbo].[F_GL_BALANCES].[ACCOUNT_ID],[dbo].[F_GL_BALANCES].[OPENING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[TOTAL_TRANSACTION_EUR],[dbo].[F_GL_BALANCES].[CLOSING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[BUSINESSSTRUCTURE_ID]  FROM [dbo].[F_GL_BALANCES]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": "SELECT [dbo].[F_GL_BALANCES].[DATE_ID],[dbo].[F_GL_BALANCES].[ACCOUNT_ID],[dbo].[F_GL_BALANCES].[OPENING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[TOTAL_TRANSACTION_EUR],[dbo].[F_GL_BALANCES].[CLOSING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[BUSINESSSTRUCTURE_ID]  FROM [dbo].[F_GL_BALANCES]"
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "F_GL_BALANCES"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [dbo].[F_GL_BALANCES].[DATE_ID],[dbo].[F_GL_BALANCES].[ACCOUNT_ID],[dbo].[F_GL_BALANCES].[OPENING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[TOTAL_TRANSACTION_EUR],[dbo].[F_GL_BALANCES].[CLOSING_BALANCE_EUR],[dbo].[F_GL_BALANCES].[BUSINESSSTRUCTURE_ID]  FROM [dbo].[F_GL_BALANCES]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+          }
+        ]
+      },
+      {
+        "name": "Budget",
+        "columns": [
+          {
+            "name": "BUSINESSSTRUCTURE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "BUSINESSSTRUCTURE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "DATE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "DATE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "ACCOUNT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ACCOUNT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "BUDGET_EUR_AMOUNT",
+            "dataType": "double",
+            "isHidden": true,
+            "sourceColumn": "BUDGET_EUR_AMOUNT",
+            "sourceProviderType": "Numeric"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Budget",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": " SELECT [dbo].[F_GL_BUDGET].* FROM [dbo].[F_GL_BUDGET] "
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": " SELECT [dbo].[F_GL_BUDGET].* FROM [dbo].[F_GL_BUDGET] "
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "F_GL_BUDGET"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          }
+        ]
+      },
+      {
+        "name": "GL Transactions",
+        "columns": [
+          {
+            "name": "GL_DOCUMENT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "GL_DOCUMENT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "BUSINESSSTRUCTURE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "BUSINESSSTRUCTURE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "DATE_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "DATE_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "PROJECT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "PROJECT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "ACCOUNT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ACCOUNT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "ADDRESSBOOK_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "ADDRESSBOOK_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "PRODUCT_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "PRODUCT_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "CURRENCY_ID",
+            "dataType": "int64",
+            "isHidden": true,
+            "sourceColumn": "CURRENCY_ID",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "TRANSACTION_LOCAL_AMOUNT",
+            "dataType": "double",
+            "isHidden": true,
+            "sourceColumn": "TRANSACTION_LOCAL_AMOUNT",
+            "sourceProviderType": "Numeric"
+          },
+          {
+            "type": "calculated",
+            "name": "Movement Type",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              " SWITCH(TRUE(),",
+              "        AND(RELATED(Documents[Document Type Code])=\"PV\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Saisie fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"PM\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Saisie fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"PN\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Saisie fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"PV\", RELATED(Accounts[Account Code]) = \"40810\"), \"Saisie fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"AE\", RELATED(Accounts[Account Code]) = \"40910\"), \"Saisie fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RI\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Facturation client\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RM\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Facturation client\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RI\", LEFT(RELATED(Accounts[Account Code]),3) = \"487\"), \"Facturation client\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RI\", LEFT(RELATED(Accounts[Account Code]),3) = \"419\"), \"Facturation client\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"OV\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Réception achat\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"FT\", RELATED(Accounts[Account Type]) = \"Profit & Loss\"), \"Réception transport\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"PT\", LEFT(RELATED(Accounts[Account Code]),2) = \"51\"), \"Paiement fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"PN\", LEFT(RELATED(Accounts[Account Code]),2) = \"51\"), \"Paiement fournisseur\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RC\", LEFT(RELATED(Accounts[Account Code]),2) = \"51\"), \"Règlement client\"",
+              "        , AND(RELATED(Documents[Document Type Code])=\"RI\", LEFT(RELATED(Accounts[Account Code]),2) = \"51\"), \"Remboursement client\"",
+              "        , BLANK()) "
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "GL Transactions",
+            "dataView": "full",
+            "source": {
+              "dataSource": "RDL00002_99011_Datawarehouse",
+              "query": " SELECT [dbo].[F_GL_TRANSACTIONS].* FROM [dbo].[F_GL_TRANSACTIONS] "
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": " SELECT [dbo].[F_GL_TRANSACTIONS].* FROM [dbo].[F_GL_TRANSACTIONS] "
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "F_GL_TRANSACTIONS"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "dbo"
+          }
+        ]
+      },
+      {
+        "name": "Key Measures",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "Dummy1",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Dummy1]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Dummy2",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Dummy2]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Dummy3",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Dummy3]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Dummy4",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Dummy4]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                "DataTable(\"Dummy1\", STRING,",
+                "\"Dummy2\", STRING,",
+                "\"Dummy3\", STRING,",
+                "\"Dummy4\", STRING,",
+                "{",
+                "\t{,,,}}",
+                ")"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Budget",
+            "expression": [
+              " SUM(Budget[BUDGET_EUR_AMOUNT])",
+              ""
+            ],
+            "formatString": "#,0.00 \"€\";-#,0.00 \"€\";#,0.00 \"€\"",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"1036\" DisplayName=\"€ French (France)\" Symbol=\"€\" PositivePattern=\"3\" NegativePattern=\"8\" /></Format>"
+              }
+            ]
+          },
+          {
+            "name": "Closing Balance",
+            "expression": [
+              "",
+              "IF (",
+              "    NOT (",
+              "\tISFILTERED(Documents[Batch Date])",
+              "\t|| ISFILTERED(Documents[Batch Number])",
+              "\t|| ISFILTERED(Documents[CURRENT_IND])",
+              "    || ISFILTERED(Documents[Document Company])",
+              "    || ISFILTERED(Documents[Document Date])",
+              "    || ISFILTERED(Documents[Ledger Type])",
+              "    || ISFILTERED(Documents[Line1 Description])",
+              "    || ISFILTERED(Documents[Line2 Description])",
+              "    || ISFILTERED(Documents[Document #])",
+              "    || ISFILTERED(Documents[Reference Line1 Description])",
+              "    || ISFILTERED(Documents[Reference Line2 Description])",
+              "    || ISFILTERED(Documents[Document Type Code])",
+              "    || ISFILTERED(Documents[Document Type Name])",
+              "    || ISFILTERED(Documents[Exchange Rate])",
+              "    || ISFILTERED(Documents[GL_DOCUMENT_ID])",
+              "    || ISFILTERED(Documents[Invoice Date])",
+              "    || ISFILTERED(Documents[Invoice #])",
+              "    || ISFILTERED(Documents[Line Extension Code])",
+              "    || ISFILTERED(Documents[Line #])",
+              "    || ISFILTERED(Documents[LOAD_END_DATE])",
+              "    || ISFILTERED(Documents[LOAD_START_DATE])",
+              "    || ISFILTERED(Documents[Project Type])",
+              "    || ISFILTERED(Documents[Purchase Order #])",
+              "    || ISFILTERED(Documents[Serial #])",
+              "    || ISFILTERED(Documents[Subledger Code])",
+              "    || ISFILTERED(Documents[Subledger Description])",
+              "    || ISFILTERED(Documents[Subledger Type])",
+              "    || ISFILTERED(Documents[Transaction Originator])",
+              "    || ISFILTERED(Products[CURRENT_IND])",
+              "    || ISFILTERED(Products[Exit Type Code])",
+              "    || ISFILTERED(Products[Exit Type Name])",
+              "    || ISFILTERED(Products[Family1 Code])",
+              "    || ISFILTERED(Products[Family1 Name])",
+              "    || ISFILTERED(Products[Family2 Code])",
+              "    || ISFILTERED(Products[Family2 Name])",
+              "    || ISFILTERED(Products[Family3 Code])",
+              "    || ISFILTERED(Products[Family3 Name])",
+              "    || ISFILTERED(Products[Family4 Code])",
+              "    || ISFILTERED(Products[Family4 Name])",
+              "    || ISFILTERED(Products[GL Class Code])",
+              "    || ISFILTERED(Products[GL Class Description])",
+              "    || ISFILTERED(Products[Line Type Code])",
+              "    || ISFILTERED(Products[Line Type Description])",
+              "    || ISFILTERED(Products[LOAD_END_DATE])",
+              "    || ISFILTERED(Products[LOAD_START_DATE])",
+              "    || ISFILTERED(Products[MANUFACTURING_TYPE_CODE])",
+              "    || ISFILTERED(Products[MANUFACTURING_TYPE_NAME])",
+              "    || ISFILTERED(Products[Pack Line Type Code])",
+              "    || ISFILTERED(Products[Pack Line Type Name])",
+              "    || ISFILTERED(Products[Capacity Code])",
+              "    || ISFILTERED(Products[Capacity Name])",
+              "    || ISFILTERED(Products[PRODUCT_CATALOG_CODE])",
+              "    || ISFILTERED(Products[PRODUCT_CATALOG_CODE2])",
+              "    || ISFILTERED(Products[Product Code])",
+              "    || ISFILTERED(Products[Product Description])",
+              "    || ISFILTERED(Products[PRODUCT_ID])",
+              "    || ISFILTERED(Products[PRODUCT_INTERNAL_CODE])",
+              "    || ISFILTERED(Products[Product Name])",
+              "    || ISFILTERED(Products[Product Range Code])",
+              "    || ISFILTERED(Products[Product Range Name])",
+              "    || ISFILTERED(Products[Raw Material Type Code])",
+              "    || ISFILTERED(Products[Raw Material Type Name])",
+              "    || ISFILTERED(Products[SEARCH_TEXT])",
+              "    || ISFILTERED(Products[Stocking Type Code])",
+              "    || ISFILTERED(Products[Stocking Type Description])",
+              "    || ISFILTERED(Products[UoM Code])",
+              "    || ISFILTERED(Products[UoM Description])",
+              "    || ISFILTERED('Address Books'[Address])",
+              "    || ISFILTERED('Address Books'[Address Book #])",
+              "    || ISFILTERED('Address Books'[ADDRESSBOOK_ID])",
+              "    || ISFILTERED('Address Books'[City Name])",
+              "    || ISFILTERED('Address Books'[Country Code])",
+              "    || ISFILTERED('Address Books'[Country Name])",
+              "    || ISFILTERED('Address Books'[County Name])",
+              "    || ISFILTERED('Address Books'[CURRENT_IND])",
+              "    || ISFILTERED('Address Books'[LOAD_END_DATE])",
+              "    || ISFILTERED('Address Books'[LOAD_START_DATE])",
+              "    || ISFILTERED('Address Books'[Name])",
+              "    || ISFILTERED('Address Books'[Postal Code])",
+              "    || ISFILTERED('Address Books'[Region Code])",
+              "    || ISFILTERED('Address Books'[Region Name])",
+              "    || ISFILTERED('Address Books'[State Code])",
+              "    || ISFILTERED('Address Books'[State Name])",
+              "    ),",
+              "    CALCULATE (",
+              "        SUM ( 'Account Balances'[CLOSING_BALANCE_EUR]),",
+              "        LASTNONBLANK ( 'Account Balances'[DATE_ID], 1 )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,0.00 \"€\";-#,0.00 \"€\";#,0.00 \"€\"",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"1036\" DisplayName=\"€ French (France)\" Symbol=\"€\" PositivePattern=\"3\" NegativePattern=\"8\" /></Format>"
+              }
+            ]
+          },
+          {
+            "name": "Amount",
+            "expression": "Sum('GL Transactions'[TRANSACTION_LOCAL_AMOUNT])",
+            "formatString": "#,0.00 \"€\";-#,0.00 \"€\";#,0.00 \"€\"",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"1036\" DisplayName=\"€ French (France)\" Symbol=\"€\" PositivePattern=\"3\" NegativePattern=\"8\" /></Format>"
+              }
+            ]
+          },
+          {
+            "name": "Opening Balance",
+            "expression": [
+              "",
+              "IF (",
+              "    NOT (",
+              "\tISFILTERED(Documents[Batch Date])",
+              "\t|| ISFILTERED(Documents[Batch Number])",
+              "\t|| ISFILTERED(Documents[CURRENT_IND])",
+              "    || ISFILTERED(Documents[Document Company])",
+              "    || ISFILTERED(Documents[Document Date])",
+              "    || ISFILTERED(Documents[Ledger Type])",
+              "    || ISFILTERED(Documents[Line1 Description])",
+              "    || ISFILTERED(Documents[Line2 Description])",
+              "    || ISFILTERED(Documents[Document #])",
+              "    || ISFILTERED(Documents[Reference Line1 Description])",
+              "    || ISFILTERED(Documents[Reference Line2 Description])",
+              "    || ISFILTERED(Documents[Document Type Code])",
+              "    || ISFILTERED(Documents[Document Type Name])",
+              "    || ISFILTERED(Documents[Exchange Rate])",
+              "    || ISFILTERED(Documents[GL_DOCUMENT_ID])",
+              "    || ISFILTERED(Documents[Invoice Date])",
+              "    || ISFILTERED(Documents[Invoice #])",
+              "    || ISFILTERED(Documents[Line Extension Code])",
+              "    || ISFILTERED(Documents[Line #])",
+              "    || ISFILTERED(Documents[LOAD_END_DATE])",
+              "    || ISFILTERED(Documents[LOAD_START_DATE])",
+              "    || ISFILTERED(Documents[Project Type])",
+              "    || ISFILTERED(Documents[Purchase Order #])",
+              "    || ISFILTERED(Documents[Serial #])",
+              "    || ISFILTERED(Documents[Subledger Code])",
+              "    || ISFILTERED(Documents[Subledger Description])",
+              "    || ISFILTERED(Documents[Subledger Type])",
+              "    || ISFILTERED(Documents[Transaction Originator])",
+              "    || ISFILTERED(Products[CURRENT_IND])",
+              "    || ISFILTERED(Products[Exit Type Code])",
+              "    || ISFILTERED(Products[Exit Type Name])",
+              "    || ISFILTERED(Products[Family1 Code])",
+              "    || ISFILTERED(Products[Family1 Name])",
+              "    || ISFILTERED(Products[Family2 Code])",
+              "    || ISFILTERED(Products[Family2 Name])",
+              "    || ISFILTERED(Products[Family3 Code])",
+              "    || ISFILTERED(Products[Family3 Name])",
+              "    || ISFILTERED(Products[Family4 Code])",
+              "    || ISFILTERED(Products[Family4 Name])",
+              "    || ISFILTERED(Products[GL Class Code])",
+              "    || ISFILTERED(Products[GL Class Description])",
+              "    || ISFILTERED(Products[Line Type Code])",
+              "    || ISFILTERED(Products[Line Type Description])",
+              "    || ISFILTERED(Products[LOAD_END_DATE])",
+              "    || ISFILTERED(Products[LOAD_START_DATE])",
+              "    || ISFILTERED(Products[MANUFACTURING_TYPE_CODE])",
+              "    || ISFILTERED(Products[MANUFACTURING_TYPE_NAME])",
+              "    || ISFILTERED(Products[Pack Line Type Code])",
+              "    || ISFILTERED(Products[Pack Line Type Name])",
+              "    || ISFILTERED(Products[Capacity Code])",
+              "    || ISFILTERED(Products[Capacity Name])",
+              "    || ISFILTERED(Products[PRODUCT_CATALOG_CODE])",
+              "    || ISFILTERED(Products[PRODUCT_CATALOG_CODE2])",
+              "    || ISFILTERED(Products[Product Code])",
+              "    || ISFILTERED(Products[Product Description])",
+              "    || ISFILTERED(Products[PRODUCT_ID])",
+              "    || ISFILTERED(Products[PRODUCT_INTERNAL_CODE])",
+              "    || ISFILTERED(Products[Product Name])",
+              "    || ISFILTERED(Products[Product Range Code])",
+              "    || ISFILTERED(Products[Product Range Name])",
+              "    || ISFILTERED(Products[Raw Material Type Code])",
+              "    || ISFILTERED(Products[Raw Material Type Name])",
+              "    || ISFILTERED(Products[SEARCH_TEXT])",
+              "    || ISFILTERED(Products[Stocking Type Code])",
+              "    || ISFILTERED(Products[Stocking Type Description])",
+              "    || ISFILTERED(Products[UoM Code])",
+              "    || ISFILTERED(Products[UoM Description])",
+              "    || ISFILTERED('Address Books'[Address])",
+              "    || ISFILTERED('Address Books'[Address Book #])",
+              "    || ISFILTERED('Address Books'[ADDRESSBOOK_ID])",
+              "    || ISFILTERED('Address Books'[City Name])",
+              "    || ISFILTERED('Address Books'[Country Code])",
+              "    || ISFILTERED('Address Books'[Country Name])",
+              "    || ISFILTERED('Address Books'[County Name])",
+              "    || ISFILTERED('Address Books'[CURRENT_IND])",
+              "    || ISFILTERED('Address Books'[LOAD_END_DATE])",
+              "    || ISFILTERED('Address Books'[LOAD_START_DATE])",
+              "    || ISFILTERED('Address Books'[Name])",
+              "    || ISFILTERED('Address Books'[Postal Code])",
+              "    || ISFILTERED('Address Books'[Region Code])",
+              "    || ISFILTERED('Address Books'[Region Name])",
+              "    || ISFILTERED('Address Books'[State Code])",
+              "    || ISFILTERED('Address Books'[State Name])",
+              "",
+              "    ),",
+              "    CALCULATE (",
+              "        SUM ( 'Account Balances'[OPENING_BALANCE_EUR]),",
+              "        FIRSTNONBLANK ( 'Account Balances'[DATE_ID], 1 )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,0.00 \"€\";-#,0.00 \"€\";#,0.00 \"€\"",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"Currency\" Accuracy=\"2\"><Currency LCID=\"1036\" DisplayName=\"€ French (France)\" Symbol=\"€\" PositivePattern=\"3\" NegativePattern=\"8\" /></Format>"
+              }
+            ]
+          },
+          {
+            "name": "Document Count",
+            "expression": [
+              "",
+              "DISTINCTCOUNTNOBLANK(Documents[Document #])"
+            ],
+            "formatString": "#,0"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "0ad48ef5-0659-4a51-a83e-6a0939bec983",
+        "toTable": "Dates",
+        "toColumn": "DATE_ID",
+        "fromTable": "Budget",
+        "fromColumn": "DATE_ID"
+      },
+      {
+        "name": "d84f553d-13e4-4d41-b676-e6a1f8e8f88b",
+        "toTable": "Dates",
+        "toColumn": "DATE_ID",
+        "fromTable": "GL Transactions",
+        "fromColumn": "DATE_ID"
+      },
+      {
+        "name": "7dfd1c51-242a-4acc-a422-88c507b9ff29",
+        "toTable": "Dates",
+        "toColumn": "DATE_ID",
+        "fromTable": "Account Balances",
+        "fromColumn": "DATE_ID"
+      },
+      {
+        "name": "6a336e6d-03e3-4886-8b8a-79a49c32de1b",
+        "toTable": "Accounts",
+        "toColumn": "ACCOUNT_ID",
+        "fromTable": "Account Balances",
+        "fromColumn": "ACCOUNT_ID"
+      },
+      {
+        "name": "b92f4dc4-bbf7-49fa-a969-c047f96eb53e",
+        "toTable": "Accounts",
+        "toColumn": "ACCOUNT_ID",
+        "fromTable": "GL Transactions",
+        "fromColumn": "ACCOUNT_ID"
+      },
+      {
+        "name": "c6b8e1cd-673f-416d-a1d9-23598e4f342c",
+        "fromColumn": "GL_DOCUMENT_ID",
+        "toTable": "GL Transactions",
+        "toColumn": "GL_DOCUMENT_ID",
+        "fromCardinality": "one",
+        "fromTable": "Documents",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "c24b108d-440d-4054-8032-3174a6750c6b",
+        "toTable": "Products",
+        "toColumn": "PRODUCT_ID",
+        "fromTable": "GL Transactions",
+        "fromColumn": "PRODUCT_ID"
+      },
+      {
+        "name": "65c1cd1b-93e4-4e82-aec1-0a360b0065d1",
+        "toTable": "Address Books",
+        "toColumn": "ADDRESSBOOK_ID",
+        "fromTable": "GL Transactions",
+        "fromColumn": "ADDRESSBOOK_ID"
+      },
+      {
+        "name": "394a8cc4-f8ee-4a45-a8fc-63222c583d68",
+        "toTable": "Business Structure",
+        "toColumn": "BUSINESSSTRUCTURE_ID",
+        "fromTable": "GL Transactions",
+        "fromColumn": "BUSINESSSTRUCTURE_ID"
+      },
+      {
+        "name": "69570ddc-81e1-49be-9dfd-af5a8c51dee4",
+        "toTable": "Business Structure",
+        "toColumn": "BUSINESSSTRUCTURE_ID",
+        "fromTable": "Budget",
+        "fromColumn": "BUSINESSSTRUCTURE_ID"
+      },
+      {
+        "name": "29a4c008-092a-43f9-929f-dcbb0c2ca338",
+        "toTable": "Accounts",
+        "toColumn": "ACCOUNT_ID",
+        "fromTable": "Budget",
+        "fromColumn": "ACCOUNT_ID"
+      },
+      {
+        "name": "37ba8d02-d15f-4846-a743-3c33fc4832b9",
+        "toTable": "Business Structure",
+        "toColumn": "BUSINESSSTRUCTURE_ID",
+        "fromTable": "Account Balances",
+        "fromColumn": "BUSINESSSTRUCTURE_ID"
+      }
+    ],
+    "roles": [
+      {
+        "name": "VIEW_ALL",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "TECHNT\\DL-SSAS-RDL00002_99011_GL Transactions_PD-View_All",
+            "memberId": "S-1-5-21-1444052156-1758601150-184960113-122958"
+          }
+        ]
+      },
+      {
+        "name": "ADMIN",
+        "modelPermission": "administrator",
+        "members": [
+          {
+            "memberName": "TECHNT\\ALLSQLDeveloperDTSQL012",
+            "memberId": "S-1-5-21-1444052156-1758601150-184960113-126028"
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "ClientCompatibilityLevel",
+        "value": "600"
+      }
+    ]
+  }
+}
